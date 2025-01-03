@@ -1,20 +1,31 @@
-import {getBacklinksByContentId} from './serverApi.js'
-import {mkNetworkData} from './dataHandlers.js'
-
-
-export default (Graph) => {
-  const handleClickNode = (lastNetworkData) => async (node)  => {
-    console.log(node)
-    const {id, isPerson} = node;
-    if(!isPerson){
-      return false
+export const getNodesConnected = (lastNetworkData, nodeId) => {
+  const {links} = lastNetworkData;
+  return links.reduce((acct, link) => {
+    console.log(acct)
+    if(link.source.id === nodeId){
+      return [...acct, link.target.id]
     }
-    console.log(id, isPerson)
-    const rows = await getBacklinksByContentId(id)
-    lastNetworkData = mkNetworkData(rows, node.id, lastNetworkData);
-    console.log(lastNetworkData)
-    Graph.graphData(lastNetworkData)
-  }
-  
-  return {handleClickNode}
+    if(link.target.id === nodeId){
+      return [...acct, link.source.id]
+    }
+    return [...acct]
+  }, [])
 }
+
+export const getLinksOfNode = (lastNetworkData, nodeId) => {
+  const newLinks = [...lastNetworkData.nodes]
+  return newLinks.filter(link => {
+    return link.source.id === nodeId || link.target.id === nodeId;
+  })
+}
+
+export const removeNodes = (lastNetworkData, nodesToRemove) => {
+  const newNodes = [...lastNetworkData.nodes];
+  return newNodes.filter(node => {
+    if(nodesToRemove.find(nodeToRemove => nodeToRemove.id === node.id)){
+      return false;
+    }
+    return true;
+  })
+}
+  
