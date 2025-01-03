@@ -1569,6 +1569,11 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
+hangul-js@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/hangul-js/-/hangul-js-0.2.6.tgz#3e552e3a68c76498cf2c7993ca354af7bad4730d"
+  integrity sha512-48axU8LgjCD30FEs66Xc04/8knxMwCMQw0f67l67rlttW7VXT3qRJgQeHmhiuGwWXGvSbk6YM0fhQlcjE1JFQA==
+
 has-flag@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
@@ -1856,6 +1861,11 @@ minimist@^1.2.0:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
+
+minisearch@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/minisearch/-/minisearch-7.1.1.tgz#901d0367f078233cdc7a10be7264e09c6248cf5f"
+  integrity sha512-b3YZEYCEH4EdCAtYP7OlDyx7FdPwNzuNwLQ34SfJpM9dlbBZzeXndGavTrC+VCiRWomL21SWfMc6SCKO/U2ZNw==
 
 ms@^2.1.3:
   version "2.1.3"
