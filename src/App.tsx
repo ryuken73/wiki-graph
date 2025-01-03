@@ -42,8 +42,9 @@ function App() {
     getBacklinksByContentId(contentId)
     .then((result: unknown) => {
       console.log(result)
+      const includeOnlyContents = true;
       setLastNetworkData((lastNetworkData) => {
-        const newNetworkData = mkNetworkData(result, contentId, lastNetworkData);
+        const newNetworkData = mkNetworkData(result, contentId, lastNetworkData, includeOnlyContents);
         return newNetworkData;
       })
     })
@@ -53,12 +54,16 @@ function App() {
     if(!isPerson){
       return false
     }
+    if(nodesExpanded.some(node => node.id === id)){
+      return false
+    }
     console.log(node);
+    const includeOnlyContents = true;
     const rows = await getBacklinksByContentId(id)
-    const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData);
+    const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
     setLastNetworkData(newNetworkData)
     setNodesExpanded(nodes => [node, ...nodes]);
-  }, [lastNetworkData]);
+  }, [lastNetworkData, nodesExpanded]);
 
   const removeNode = React.useCallback((event) => {
     const id = event.target.id

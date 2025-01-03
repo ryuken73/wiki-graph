@@ -13,12 +13,14 @@ const isNewNode = (row, prevResult) => {
   return !dupNode;
 }
 
-export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}) => {
+export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents) => {
   const gData = rows.reduce((acct, row, index) => {
-    if(row.content_id === null){
-      return acct
+    if(includeOnlyContents){
+      if(row.content_id === null){
+        return acct
+      }
     }
-      // console.log(`${row.backlink_text} is not just backlink. add `)
+    // console.log(`${row.backlink_text} is not just backlink. add `)
     const newNodes = isNewNode(row, prevResult) ?
     [
       ...acct.nodes,
@@ -28,7 +30,6 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}) =
         backlinkId: row.backlink_id,
         text: row.backlink_text,
         color: row.content_id ? COLORS[row.primary_category] : COLORS.other,
-        value: row.count === "0" ? 1 : parseInt(row.count),
         isPerson: row.content_id ? true : false,
         primaryCategory: row.primary_category || 'none',
         backlinkCount: parseInt(row.backlink_count),
