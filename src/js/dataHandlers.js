@@ -23,11 +23,18 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}) =
     [
       ...acct.nodes,
       {
-        id: row.content_id || row.backlink_id,
+        // id: row.content_id || row.backlink_id,
+        contentId: row.content_id,
+        backlinkId: row.backlink_id,
         text: row.backlink_text,
-        color: row.content_id ? COLORS.person : COLORS.other,
+        color: row.content_id ? COLORS[row.primary_category] : COLORS.other,
         value: row.count === "0" ? 1 : parseInt(row.count),
-        isPerson: row.content_id ? true : false
+        isPerson: row.content_id ? true : false,
+        primaryCategory: row.primary_category || 'none',
+        backlinkCount: parseInt(row.backlink_count),
+        get id(){
+          return this.contentId || this.backlinkId
+        },
       }
     ]:[
       ...acct.nodes
