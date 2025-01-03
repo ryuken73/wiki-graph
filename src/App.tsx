@@ -5,7 +5,7 @@ import Graph2D from './Graph2D'
 import {getBacklinksByContentId} from './js/serverApi.js';
 import {mkNetworkData} from './js/dataHandlers.js';
 import {
-  getNodesConnected, 
+  getNodeIdsConnected, 
   getLinksOfNode,
   removeNodes
 } from './js/graphHandlers.js';
@@ -36,7 +36,7 @@ const initialNode = {
 
 function App() {
   const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[initialNode], links:[]});
-  const [nodesExpanded, setNodesExpanded] = React.useState([]);
+  const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
   // get initial network data
   React.useEffect( () => {
     getBacklinksByContentId(contentId)
@@ -62,17 +62,27 @@ function App() {
 
   const removeNode = React.useCallback((event) => {
     const id = event.target.id
-    setLastNetworkData(lastNetworkData => {
-      const nodesConnected = getNodesConnected(lastNetworkData, id);
-      const linksOfNode = getLinksOfNode(lastNetworkData, id);
-      const nodesToRemove = removeNode(nodesConnected, nodesExpanded)
-      console.log(nodesToRemove)
-      const newNodes = removeNode(lastNetworkData, nodesToRemove);
-      const newLinks = [...lastNetworkData.links];
+    setLastNetworkData((lastNetworkData) => {
+      const includeSelf = true;
+      const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, id, includeSelf);
+      const nodeIdsExpanded = nodesExpanded.map(node => node.id);
+      const nodeIdsToDelete = removeNodes(nodeIdsConnected, nodeIdsExpanded);
+      console.log(nodeIdsToDelete)
+      const newLinks = [...lastNetworkData.links].filter(link => {
+        return !nodeIdsToDelete.includes(link.source.id) && !nodeIdsToDelete.includes(link.target.id);
+      })
+      const newNodes = [...lastNetworkData.nodes].filter(node => {
+        return !nodeIdsToDelete.includes(node.id)
+      })
       return {
         nodes: newNodes,
         links: newLinks
-      }
+      };
+    })
+    setNodesExpanded(nodesExpanded => {
+      return [...nodesExpanded].filter(node => {
+        return node.id !== id;
+      })
     })
   }, [nodesExpanded])
 
