@@ -8,7 +8,7 @@ const isNewNode = (row, prevResult) => {
     return node.id === row.content_id || node.id === row.backlink_id
   })
   if(dupNode){
-    console.log(`${row.backlink_text} ${row.content_name} isDup:`, dupNode);
+    // console.log(`${row.backlink_text} ${row.content_name} isDup:`, dupNode);
   }
   return !dupNode;
 }
@@ -18,7 +18,7 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}) =
     if(row.content_id === null){
       return acct
     }
-      console.log(`${row.backlink_text} is not just backlink. add `)
+      // console.log(`${row.backlink_text} is not just backlink. add `)
     const newNodes = isNewNode(row, prevResult) ?
     [
       ...acct.nodes,
