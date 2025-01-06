@@ -7,3 +7,10 @@ export const getBacklinksByContentId = async (contentId) => {
   console.log(rows)
   return rows
 }
+export const getForwardlinksByBacklinkId = async (backlinkId) => {
+  const personData = await fetch(`${API_URL}/forwardlinks/byBacklinkId/${backlinkId}`);
+  const jsonResult = await personData.json();
+  const {rows, rowCount} = jsonResult;
+  console.log(rows)
+  return rows
+}
