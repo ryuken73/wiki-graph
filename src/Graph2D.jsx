@@ -2,7 +2,7 @@ import React from 'react';
 import {ForceGraph2D} from 'react-force-graph';
 
 export default function Graph2D(props) {
-  const {graphData, handleNodeClick} = props;
+  const {graphData, handleNodeClick, handleLeftClick} = props;
   const fgRef = React.useRef(null);
   return (
     <ForceGraph2D
@@ -10,6 +10,7 @@ export default function Graph2D(props) {
       graphData={graphData}
       backgroundColor="#000003"
       linkColor={()=>'rgba(255,255,255,0.1)'}
+      onNodeClick={handleLeftClick}
       onNodeRightClick={handleNodeClick}
       linkDirectionalArrowLength={0}
       linkDirectionalArrowRelPos={1}  
