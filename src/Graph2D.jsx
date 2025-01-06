@@ -11,6 +11,9 @@ export default function Graph2D(props) {
       backgroundColor="#000003"
       linkColor={()=>'rgba(255,255,255,0.1)'}
       onNodeRightClick={handleNodeClick}
+      linkDirectionalArrowLength={0}
+      linkDirectionalArrowRelPos={1}  
+      linkDirectionalParticles={1}
       onEngineStop={() => console.log('engine stops')}
       onNodeDragEnd={node => {
         node.fx = node.x;
