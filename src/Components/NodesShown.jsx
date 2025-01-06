@@ -1,4 +1,5 @@
 import React from 'react';
+import NodeExpanded from './NodeExpanded';
 import styled from 'styled-components';
 import MiniSearch from 'minisearch';
 import hangul from 'hangul-js';
@@ -28,44 +29,7 @@ const Rows = styled.div`
     background-color: black;
   }
 `
-const RowContainer = styled.div`
-  padding: 3px;
-  background-color: black;
-  margin-bottom: 3px;
-`
-const CCTV = styled.div`
-  display: flex;
-  font-size: 12px;
-  font-weight: 100;
-  color: yellow;
-`
-const Action = styled.div`
-  margin-left: 3px;
-`
-const Title = styled(Action)`
-  /* color: ${(props) => props.action === 'del' && 'lightgrey'}; */
-  cursor: pointer;
-  width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  &:hover {
-    color: white;
-  };
-`
-const DelButton = styled(Action)`
-  color: red;
-  margin-left: auto;
-  font-weight: 200;
-  cursor: pointer;
-  &:hover {
-    color: white;
-  };
-`
-const TimeStamp = styled(Action)`
-  font-size: 11px;
-  color: #d73232;
-`
+
 const HistoryCount = styled.div`
   font-size: 12px;
   margin-top: auto;
@@ -83,12 +47,12 @@ const SEARCH_OPTION = {
 
 function NodesShown(props) {
   // eslint-disable-next-line react/prop-types
-  const {nodesExpanded, removeNode} = props;
-  const [cctvHistory, setHistory] = React.useState([]);
-  const [cctvHistoryFiltered, setHistoryFiltered] = React.useState([]);
-  const [currentDateUnit, setCurrentDateUnit] = React.useState('M');
+  const {
+    nodesExpanded, 
+    removeNode, 
+    setLastNetworkData
+  } = props;
   const miniSearchRef = React.useRef(null);
-  const filterRef = React.useRef(null);
 
   const searchTitle = React.useCallback((title) => {
     const searchPattern =
@@ -99,22 +63,14 @@ function NodesShown(props) {
   return (
     <Container>
       <Rows>
+        <div>Node Expanded</div>
         {nodesExpanded.map((node) => (
-          <RowContainer key={node.id}>
-            <CCTV key={node.id}>
-              {/* <Action>[{cctv.action}]</Action> */}
-              <Title
-                id={node.id}
-                onClick={()=>{}}
-              >
-                {node.text}
-              </Title>
-              <DelButton id={node.id} onClick={removeNode}>
-                [Del]
-              </DelButton>
-            </CCTV>
-            <TimeStamp># of leaf: {node.value}</TimeStamp>
-          </RowContainer>
+          <NodeExpanded
+            key={node.id}
+            node={node}
+            removeNode={removeNode}
+            setLastNetworkData={setLastNetworkData}
+          ></NodeExpanded>
         ))}
       </Rows>
       <HistoryCount>
