@@ -13,7 +13,7 @@ const isNewNode = (row, prevResult) => {
   return !dupNode;
 }
 
-export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents) => {
+export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents, isForwardlink=false) => {
   const gData = rows.reduce((acct, row, index) => {
     if(includeOnlyContents){
       if(row.content_id === null){
@@ -30,7 +30,7 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
         backlinkId: row.backlink_id,
         text: row.backlink_text,
         color: row.content_id ? COLORS[row.primary_category] : COLORS.other,
-        isPerson: row.content_id ? true : false,
+        isContent: row.content_id ? true : false,
         primaryCategory: row.primary_category || 'none',
         backlinkCount: parseInt(row.backlink_count),
         get id(){
@@ -42,9 +42,14 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
     ]
     const newLinks = [
       ...acct.links,
+      isForwardlink ?
       {
-        source: sourceId,
-        target: row.content_id || row.backlink_id
+        target: row.content_id || row.backlink_id,
+        source: sourceId
+      }:
+      {
+        source: row.content_id || row.backlink_id,
+        target: sourceId
       }
     ]
     return {
