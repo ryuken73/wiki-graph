@@ -28,6 +28,16 @@ const AbsoluteBoxForNodesShown = styled.div`
   z-index: 10;  
   /* background: rgba(255,255,255,0.1); */
   /* height: 80%; */
+  padding: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+`
+const ActiveExpandedNode = styled.div`
+  grid-column: 1/-1;
+  color: yellow;
+  font-weight: 200;
+  background: rgba(255,255,255,0.1);
+  padding: 3px; 
+  font-size: 20px;
 `
 
 const COLORS = {
@@ -134,6 +144,7 @@ function App() {
         handleLeftClick={expandNodeWithForwardLinks}
       ></Graph2D>
       <AbsoluteBoxForNodesShown>
+        <ActiveExpandedNode>이광수</ActiveExpandedNode>
         <BacklinkContainer
           lastNetworkData={lastNetworkData}
           expandNode={expandNode}

@@ -8,6 +8,7 @@ export const Container = styled.div`
   min-width: 150px;
   max-width: 150px;
   user-select: none;
+  background: rgba(255,255,255,0.1);
 `
 export const Rows = styled.div`
   /* height: 500px; */
@@ -30,5 +31,10 @@ export const HistoryCount = styled.div`
   margin-top: auto;
   padding: 5px;
   color: yellow;
+  font-weight: 200;
+`
+export const Title = styled.div`
+  text-align: center;
+  color: grey;
   font-weight: 200;
 `

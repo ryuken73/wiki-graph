@@ -6,47 +6,13 @@ import {
   extractBacklinks,
   extractForwardlinks
 } from '../js/dataHandlers.js';
-
-const RowContainer = styled.div`
-  padding: 3px;
-  background-color: black;
-  margin-bottom: 3px;
-`
-const Node = styled.div`
-  display: flex;
-  font-size: 12px;
-  font-weight: 100;
-  color: yellow;
-`
-const Action = styled.div`
-  margin-left: 3px;
-`
-const Title = styled(Action)`
-  /* color: ${(props) => props.action === 'del' && 'lightgrey'}; */
-  cursor: pointer;
-  width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  &:hover {
-    color: white;
-  };
-`
-const DelButton = styled(Action)`
-  color: red;
-  margin-left: auto;
-  font-weight: 200;
-  cursor: pointer;
-  &:hover {
-    color: white;
-  };
-`
-const TimeStamp = styled(Action)`
-  font-size: 11px;
-  color: #d73232;
-  text-align: right;
-  cursor: pointer;
-`
+import {
+  RowContainer,
+  Node,
+  Title,
+  DelButton,
+  TimeStamp
+} from './NodeStyles.js'
 
 function NodeExpanded(props) {
   const {

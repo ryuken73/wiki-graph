@@ -6,13 +6,12 @@ import styled from 'styled-components';
 import {
   Container,
   Rows,
-  HistoryCount
+  HistoryCount,
+  Title
 } from './ContainerStyles';
 
-const Title = styled.div`
-  text-align: right;
+const TitleExpanded = styled(Title)`
   color: yellow;
-  font-weight: 200;
 `
 const SEARCH_OPTION = {
   prefix: true,
@@ -41,7 +40,7 @@ function ExpandedContainer(props) {
 
   return (
     <Container>
-      <Title>Node Expanded</Title>
+      <TitleExpanded>Node Expanded</TitleExpanded>
       <Rows>
         {nodesExpanded.map((node) => (
           <NodeExpanded
