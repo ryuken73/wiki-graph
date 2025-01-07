@@ -30,4 +30,11 @@ export const removeNodes = (nodesFrom, nodesToRemove) => {
     return [...acct, newNode]
   }, [])
 }
+
+export const getNodeTextById = (lastNetworkData, nodeId) => {
+  return (lastNetworkData.nodes.find(node => node.id === nodeId))?.text;
+}
+export const getNumberOfNodes = (lastNetworkData) => {
+  return lastNetworkData.nodes.length;
+}
   

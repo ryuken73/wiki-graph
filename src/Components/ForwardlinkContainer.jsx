@@ -15,8 +15,9 @@ function ForwardlinkContainer(props) {
     forwardlinksToShow,
     expandNode
   } = props;
-  const nodeText = activeExpandedNodeId === null ? null : lastNetworkData.nodes.find(node => node.id === activeExpandedNodeId).text;
-  const title = nodeText ?  `Forwardlinks(${nodeText})` : 'Forwardlinks';
+  // const nodeText = activeExpandedNodeId === null ? null : lastNetworkData.nodes.find(node => node.id === activeExpandedNodeId).text;
+  // const title = nodeText ?  `Forwardlinks(${nodeText})` : 'Forwardlinks';
+  const title = forwardlinksToShow.length > 0  ?  `Forwardlinks(${forwardlinksToShow.length})` : 'Forwardlinks';
   console.log('xx',forwardlinksToShow)
   return (
     <Container>
@@ -31,7 +32,8 @@ function ForwardlinkContainer(props) {
         ))}
       </Rows>
       <HistoryCount>
-        {forwardlinksToShow.length} shown
+        {/* {forwardlinksToShow.length} shown */}
+        <span>filter</span>
       </HistoryCount>
     </Container>
   )

@@ -16,8 +16,7 @@ function BacklinkContainer(props) {
     backlinksToShow,
     expandNode
   } = props;
-  const nodeText = activeExpandedNodeId === null ? null : lastNetworkData.nodes.find(node => node.id === activeExpandedNodeId).text;
-  const title = nodeText ?  `Backlinks(${nodeText})` : 'Backlinks';
+  const title = backlinksToShow.length > 0  ?  `Backlinks(${backlinksToShow.length})` : 'Backlinks';
   return (
     <Container> 
       <Title>{title}</Title>
@@ -31,7 +30,8 @@ function BacklinkContainer(props) {
         ))}
       </Rows>
       <HistoryCount>
-        {backlinksToShow.length} shown
+        {/* {backlinksToShow.length} shown */}
+        <span>filter</span>
       </HistoryCount>
     </Container>
   )

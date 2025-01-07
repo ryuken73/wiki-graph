@@ -10,7 +10,9 @@ import {mkNetworkData} from './js/dataHandlers.js';
 import {
   getNodeIdsConnected, 
   getLinksOfNode,
-  removeNodes
+  removeNodes,
+  getNodeTextById,
+  getNumberOfNodes
 } from './js/graphHandlers.js';
 import './App.css'
 import ExpandedContainer from './Components/ExpandedContainer';
@@ -38,6 +40,9 @@ const ActiveExpandedNode = styled.div`
   background: rgba(255,255,255,0.1);
   padding: 3px; 
   font-size: 20px;
+`
+const NodeText = styled.span``
+const TotalNodes = styled.span`
 `
 
 const COLORS = {
@@ -135,6 +140,8 @@ function App() {
   }, [nodesExpanded])
 
   console.log('lastNetwokData=', lastNetworkData)
+  const totalNodes = getNumberOfNodes(lastNetworkData);
+  const activeExpandedText = getNodeTextById(lastNetworkData, activeExpandedNodeId);
 
   return (
     <Container>
@@ -144,7 +151,14 @@ function App() {
         handleLeftClick={expandNodeWithForwardLinks}
       ></Graph2D>
       <AbsoluteBoxForNodesShown>
-        <ActiveExpandedNode>이광수</ActiveExpandedNode>
+        <ActiveExpandedNode>
+          {activeExpandedNodeId !== null ? (
+            <NodeText>{activeExpandedText}</NodeText>
+          ) : (
+            <TotalNodes 
+            >[{totalNodes}]</TotalNodes>
+          )}
+        </ActiveExpandedNode>
         <BacklinkContainer
           lastNetworkData={lastNetworkData}
           expandNode={expandNode}
