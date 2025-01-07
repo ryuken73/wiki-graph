@@ -13,6 +13,23 @@ const isNewNode = (row, prevResult) => {
   return !dupNode;
 }
 
+export const extractBacklinks = (networkData, centerId) => {
+  console.log(networkData, centerId)
+  const {links} = networkData;
+  const linksRelated = links.filter(link => {
+    return link.target.id === centerId;
+  })
+  return [...new Set(linksRelated.map(link => link.source))];
+}
+
+export const extractForwardlinks = (networkData, centerId) => {
+  const {links} = networkData;
+  const linksRelated = links.filter(link => {
+    return link.source.id === centerId;
+  })
+  return [...new Set(linksRelated.map(link => link.target))];
+}
+
 export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents, isForwardlink=false) => {
   const gData = rows.reduce((acct, row, index) => {
     if(includeOnlyContents){

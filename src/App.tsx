@@ -2,7 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 // import {ForceGraph2D} from 'react-force-graph';
 import Graph2D from './Graph2D'
-import {getBacklinksByContentId} from './js/serverApi.js';
+import {
+  getBacklinksByContentId,
+  getForwardlinksByBacklinkId
+} from './js/serverApi.js';
 import {mkNetworkData} from './js/dataHandlers.js';
 import {
   getNodeIdsConnected, 
@@ -11,15 +14,20 @@ import {
 } from './js/graphHandlers.js';
 import './App.css'
 import NodesShown from './Components/NodesShown';
+import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
+import BacklinkContainer from './Components/BacklinkContainer.jsx';
 
 const Container = styled.div``
 const AbsoluteBoxForNodesShown = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 5px;
   position:  absolute;
-  top: 10%;
+  top: 15vh;
   right: 5%;
   z-index: 10;  
-  background: rgba(255,255,255,0.1);
-  height: 80%;
+  /* background: rgba(255,255,255,0.1); */
+  /* height: 80%; */
 `
 
 const COLORS = {
@@ -37,6 +45,8 @@ const initialNode = {
 function App() {
   const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[initialNode], links:[]});
   const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
+  const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
+  const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   // get initial network data
   React.useEffect( () => {
     getBacklinksByContentId(contentId)
@@ -50,20 +60,42 @@ function App() {
     })
   }, [])
   const expandNode = React.useCallback(async (node) => {
-    const {id, isPerson} = node;
-    if(!isPerson){
+    console.log('node click:', node)
+    const {id, isContent} = node;
+    console.log(isContent)
+    if(!isContent){
       return false
     }
-    if(nodesExpanded.some(node => node.id === id)){
-      return false
-    }
+    // if(nodesExpanded.some(node => node.id === id)){
+    //   return false
+    // }
     console.log(node);
     const includeOnlyContents = true;
     const rows = await getBacklinksByContentId(id)
-    const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
+    // const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
+    // setLastNetworkData(newNetworkData)
+    setLastNetworkData(lastNetworkData => {
+      return mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
+    })
+    setNodesExpanded(nodes => {
+      const isDup = nodes.some(existingNode => existingNode.id === node.id);
+      return isDup ? nodes : [node, ...nodes]
+    })
+  }, []);
+  const expandNodeWithForwardLinks = React.useCallback(async (node) => {
+    console.log('node click', node);
+    const {backlinkId} = node;
+    const includeOnlyContents = true;
+    const isForwardlink = true;
+    const rows = await getForwardlinksByBacklinkId(backlinkId)
+    const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     setLastNetworkData(newNetworkData)
-    setNodesExpanded(nodes => [node, ...nodes]);
-  }, [lastNetworkData, nodesExpanded]);
+    // setNodesExpanded(nodes => [node, ...nodes]);
+    setNodesExpanded(nodes => {
+      const isDup = nodes.some(existingNode => existingNode.id === node.id);
+      return isDup ? nodes : [node, ...nodes]
+    })
+  }, [lastNetworkData])
 
   const removeNode = React.useCallback((event) => {
     const id = event.target.id
@@ -98,12 +130,28 @@ function App() {
       <Graph2D
         graphData={lastNetworkData}
         handleNodeClick={expandNode}
+        handleLeftClick={expandNodeWithForwardLinks}
       ></Graph2D>
       <AbsoluteBoxForNodesShown>
+        <BacklinkContainer
+          lastNetworkData={lastNetworkData}
+          expandNode={expandNode}
+          activeExpandedNodeId={activeExpandedNodeId}
+          backlinksToShow={backlinksToShow}
+        ></BacklinkContainer>
         <NodesShown
           nodesExpanded={nodesExpanded}
           removeNode={removeNode}
+          lastNetworkData={lastNetworkData}
+          setLastNetworkData={setLastNetworkData}
+          setBacklinksToShow={setBacklinksToShow}
+          setActiveExpandedNodeId={setActiveExpandedNodeId}
         ></NodesShown>
+        <ForwardlinkContainer
+          nodesExpanded={nodesExpanded}
+          removeNode={removeNode}
+          setLastNetworkData={setLastNetworkData}
+        ></ForwardlinkContainer>
       </AbsoluteBoxForNodesShown>
     </Container>
   )

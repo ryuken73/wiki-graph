@@ -1,56 +1,34 @@
 import React from 'react';
 import NodeExpanded from './NodeExpanded';
-import styled from 'styled-components';
 import MiniSearch from 'minisearch';
 import hangul from 'hangul-js';
+import styled from 'styled-components';
+import {
+  Container,
+  Rows,
+  HistoryCount
+} from './ContainerStyles';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  /* border: 2px maroon solid; */
-  min-width: 150px;
-  max-width: 150px;
-  user-select: none;
-`
-const Rows = styled.div`
-  height: 100%;
-  margin-top: 3px;
-  padding-right: 3px;
-  padding-left: 3px;
-  /* overflow-y: scroll; */
-  &::-webkit-scrollbar {
-    width: 10px;
-  };
-  &::-webkit-scrollbar-thumb {
-    background-color: #9b6a2f;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: black;
-  }
-`
-
-const HistoryCount = styled.div`
-  font-size: 12px;
-  margin-top: auto;
-  padding: 5px;
+const Title = styled.div`
+  text-align: right;
   color: yellow;
   font-weight: 200;
 `
-
 const SEARCH_OPTION = {
   prefix: true,
   fields: ['json.title'],
   fuzzy: 0.3
 };
 
-
 function NodesShown(props) {
   // eslint-disable-next-line react/prop-types
   const {
     nodesExpanded, 
     removeNode, 
-    setLastNetworkData
+    lastNetworkData,
+    setLastNetworkData,
+    setBacklinksToShow,
+    setActiveExpandedNodeId
   } = props;
   const miniSearchRef = React.useRef(null);
 
@@ -62,14 +40,17 @@ function NodesShown(props) {
 
   return (
     <Container>
+      <Title>Node Expanded</Title>
       <Rows>
-        <div>Node Expanded</div>
         {nodesExpanded.map((node) => (
           <NodeExpanded
             key={node.id}
             node={node}
             removeNode={removeNode}
+            lastNetworkData={lastNetworkData}
+            setBacklinksToShow={setBacklinksToShow}
             setLastNetworkData={setLastNetworkData}
+            setActiveExpandedNodeId={setActiveExpandedNodeId}
           ></NodeExpanded>
         ))}
       </Rows>

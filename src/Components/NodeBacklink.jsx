@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {getBacklinksByContentId} from '../js/serverApi.js';
-import {mkNetworkData, extractBacklinks} from '../js/dataHandlers.js';
+import {mkNetworkData} from '../js/dataHandlers.js';
 
 const RowContainer = styled.div`
   padding: 3px;
@@ -44,23 +44,17 @@ const TimeStamp = styled(Action)`
   cursor: pointer;
 `
 
-function NodeExpanded(props) {
+function NodeBacklink(props) {
   const {
     node, 
     removeNode, 
-    lastNetworkData,
-    setLastNetworkData, 
-    setBacklinksToShow,
+    expandNode,
     setActiveExpandedNodeId
   } = props;
   const [isShowAll, setIsShowAll] = React.useState(false);
-  const onClickTitle = React.useCallback((event) => {
-    const id = event.target.id;
-    setActiveExpandedNodeId(id);
-    const backlinkNodes = extractBacklinks(lastNetworkData, id);
-    setBacklinksToShow(backlinkNodes);
-    console.log(backlinkNodes)
-  }, [lastNetworkData])
+  const onClickTitle = React.useCallback(async (event) => {
+    expandNode(node)
+  }, [node])
   const toggleShowsAllBacklinks = React.useCallback((event) => {
     const {id} = event.target;
     setIsShowAll( async (isShowAll) => {
@@ -95,4 +89,4 @@ function NodeExpanded(props) {
   )
 }
 
-export default React.memo(NodeExpanded)
+export default React.memo(NodeBacklink)
