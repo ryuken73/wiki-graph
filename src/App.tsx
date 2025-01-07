@@ -47,6 +47,7 @@ function App() {
   const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
+  const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
   // get initial network data
   React.useEffect( () => {
     getBacklinksByContentId(contentId)
@@ -145,12 +146,14 @@ function App() {
           lastNetworkData={lastNetworkData}
           setLastNetworkData={setLastNetworkData}
           setBacklinksToShow={setBacklinksToShow}
+          setForwardlinksToShow={setForwardlinkToShow}
           setActiveExpandedNodeId={setActiveExpandedNodeId}
         ></NodesShown>
         <ForwardlinkContainer
-          nodesExpanded={nodesExpanded}
-          removeNode={removeNode}
-          setLastNetworkData={setLastNetworkData}
+          lastNetworkData={lastNetworkData}
+          expandNode={expandNode}
+          activeExpandedNodeId={activeExpandedNodeId}
+          forwardlinksToShow={forwardlinksToShow}
         ></ForwardlinkContainer>
       </AbsoluteBoxForNodesShown>
     </Container>

@@ -1,15 +1,43 @@
 import React from 'react';
+import styled from 'styled-components';
+import NodeBacklink from './NodeBacklink';
 import {
   Container,
-  Rows
+  Rows,
+  HistoryCount
 } from './ContainerStyles';
 
-function ForwardlinkContainer() {
+const Title = styled.div`
+  text-align: right;
+  color: grey;
+  font-weight: 200;
+`
+
+function ForwardlinkContainer(props) {
+  const {
+    lastNetworkData, 
+    activeExpandedNodeId, 
+    forwardlinksToShow,
+    expandNode
+  } = props;
+  const nodeText = activeExpandedNodeId === null ? null : lastNetworkData.nodes.find(node => node.id === activeExpandedNodeId).text;
+  const title = nodeText ?  `Forwardlinks(${nodeText})` : 'Forwardlinks';
+  console.log('xx',forwardlinksToShow)
   return (
     <Container>
+      <Title>{title}</Title>
       <Rows>
-        <div>Forward</div>
+        {forwardlinksToShow.map(node => (
+          <NodeBacklink
+            key={node.id}
+            node={node}
+            expandNode={expandNode}
+          ></NodeBacklink>
+        ))}
       </Rows>
+      <HistoryCount>
+        {forwardlinksToShow.length} shown
+      </HistoryCount>
     </Container>
   )
 }

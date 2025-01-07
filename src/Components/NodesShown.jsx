@@ -28,6 +28,7 @@ function NodesShown(props) {
     lastNetworkData,
     setLastNetworkData,
     setBacklinksToShow,
+    setForwardlinksToShow,
     setActiveExpandedNodeId
   } = props;
   const miniSearchRef = React.useRef(null);
@@ -49,6 +50,7 @@ function NodesShown(props) {
             removeNode={removeNode}
             lastNetworkData={lastNetworkData}
             setBacklinksToShow={setBacklinksToShow}
+            setForwardlinksToShow={setForwardlinksToShow}
             setLastNetworkData={setLastNetworkData}
             setActiveExpandedNodeId={setActiveExpandedNodeId}
           ></NodeExpanded>

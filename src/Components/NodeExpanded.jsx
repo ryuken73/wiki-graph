@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import {getBacklinksByContentId} from '../js/serverApi.js';
-import {mkNetworkData, extractBacklinks} from '../js/dataHandlers.js';
+import {
+  mkNetworkData, 
+  extractBacklinks,
+  extractForwardlinks
+} from '../js/dataHandlers.js';
 
 const RowContainer = styled.div`
   padding: 3px;
@@ -51,6 +55,7 @@ function NodeExpanded(props) {
     lastNetworkData,
     setLastNetworkData, 
     setBacklinksToShow,
+    setForwardlinksToShow,
     setActiveExpandedNodeId
   } = props;
   const [isShowAll, setIsShowAll] = React.useState(false);
@@ -58,8 +63,11 @@ function NodeExpanded(props) {
     const id = event.target.id;
     setActiveExpandedNodeId(id);
     const backlinkNodes = extractBacklinks(lastNetworkData, id);
-    setBacklinksToShow(backlinkNodes);
-    console.log(backlinkNodes)
+    setBacklinksToShow(backlinkNodes)
+    console.log('backlinkNodes', backlinkNodes)
+    const forwardlinkNodes = extractForwardlinks(lastNetworkData, id);
+    setForwardlinksToShow(forwardlinkNodes)
+    console.log('forwardlinkNodes', forwardlinkNodes)
   }, [lastNetworkData])
   const toggleShowsAllBacklinks = React.useCallback((event) => {
     const {id} = event.target;
@@ -89,7 +97,7 @@ function NodeExpanded(props) {
         onClick={toggleShowsAllBacklinks}
         id={node.id}
       >
-        show all link {node.backlinkCount}
+        backlinks [{node.backlinkCount}]
       </TimeStamp>
     </RowContainer>
   )

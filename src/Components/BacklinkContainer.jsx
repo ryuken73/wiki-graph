@@ -6,6 +6,7 @@ import {
   Rows,
   HistoryCount
 } from './ContainerStyles';
+
 const Title = styled.div`
   text-align: right;
   color: grey;
