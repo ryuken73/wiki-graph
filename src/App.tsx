@@ -97,6 +97,7 @@ function App() {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
       return isDup ? nodes : [node, ...nodes]
     })
+    setActiveExpandedNodeId(node.id);
   }, []);
   const expandNodeWithForwardLinks = React.useCallback(async (node) => {
     console.log('node click', node);
@@ -111,6 +112,7 @@ function App() {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
       return isDup ? nodes : [node, ...nodes]
     })
+    setActiveExpandedNodeId(node.id);
   }, [lastNetworkData])
 
   const removeNode = React.useCallback((event) => {
