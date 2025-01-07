@@ -20,7 +20,7 @@ const SEARCH_OPTION = {
   fuzzy: 0.3
 };
 
-function NodesShown(props) {
+function ExpandedContainer(props) {
   // eslint-disable-next-line react/prop-types
   const {
     nodesExpanded, 
@@ -63,4 +63,4 @@ function NodesShown(props) {
   )
 }
 
-export default React.memo(NodesShown);
+export default React.memo(ExpandedContainer);

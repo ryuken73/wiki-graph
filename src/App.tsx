@@ -13,7 +13,7 @@ import {
   removeNodes
 } from './js/graphHandlers.js';
 import './App.css'
-import NodesShown from './Components/NodesShown';
+import ExpandedContainer from './Components/ExpandedContainer';
 import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
 
@@ -140,7 +140,7 @@ function App() {
           activeExpandedNodeId={activeExpandedNodeId}
           backlinksToShow={backlinksToShow}
         ></BacklinkContainer>
-        <NodesShown
+        <ExpandedContainer
           nodesExpanded={nodesExpanded}
           removeNode={removeNode}
           lastNetworkData={lastNetworkData}
@@ -148,7 +148,7 @@ function App() {
           setBacklinksToShow={setBacklinksToShow}
           setForwardlinksToShow={setForwardlinkToShow}
           setActiveExpandedNodeId={setActiveExpandedNodeId}
-        ></NodesShown>
+        ></ExpandedContainer>
         <ForwardlinkContainer
           lastNetworkData={lastNetworkData}
           expandNode={expandNode}
