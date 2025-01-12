@@ -105,15 +105,15 @@ function App() {
     const includeOnlyContents = true;
     const isForwardlink = true;
     const rows = await getForwardlinksByBacklinkId(backlinkId)
-    const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
-    setLastNetworkData(newNetworkData)
-    // setNodesExpanded(nodes => [node, ...nodes]);
+    setLastNetworkData(lastNetworkData => {
+      return mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
+    })
     setNodesExpanded(nodes => {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
-  }, [lastNetworkData])
+  }, [])
 
   const removeNode = React.useCallback((event) => {
     const id = event.target.id
