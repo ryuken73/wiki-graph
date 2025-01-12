@@ -8,7 +8,8 @@ export default function Graph2D(props) {
     <ForceGraph2D
       ref={fgRef}
       graphData={graphData}
-      backgroundColor="#000003"
+      // backgroundColor="#000003"
+      backgroundColor="transparent"
       linkColor={()=>'rgba(255,255,255,0.1)'}
       onNodeClick={handleLeftClick}
       onNodeRightClick={handleNodeClick}
@@ -28,7 +29,7 @@ export default function Graph2D(props) {
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
 
         ctx.textAlign = 'center';
