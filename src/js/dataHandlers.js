@@ -13,6 +13,21 @@ const isNewNode = (row, prevResult) => {
   return !dupNode;
 }
 
+const isDupLink = (newLink, connectedId, prevNetwork) => {
+  console.log(newLink.target, newLink.source, connectedId)
+  const newLinkSourceId = newLink.source;
+  const newLinkTargetId = newLink.target;
+  const prevLinks = prevNetwork.links;
+  const dupLink = prevLinks.find(link => {
+    const dupForward = link.target.id === newLinkTargetId && link.source.id === connectedId;
+    const dupBackward = link.source.id === newLinkSourceId && link.target.id === connectedId;
+    // console.log(dupForward, dupBackward)
+    return dupForward || dupBackward
+  })
+  // console.log('isDupLink value is', dupLink)
+  return dupLink;
+}
+
 export const extractBacklinks = (networkData, centerId) => {
   console.log(networkData, centerId)
   const {links} = networkData;
@@ -57,17 +72,20 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
     ]:[
       ...acct.nodes
     ]
-    const newLinks = [
+
+    const newLink = isForwardlink ? {
+      target: row.content_id || row.backlink_id,
+      source: sourceId
+    }:{
+      source: row.content_id || row.backlink_id,
+      target: sourceId
+    }
+
+    const newLinks = isDupLink(newLink, sourceId, prevResult) ? [
+      ...acct.links
+    ] : [
       ...acct.links,
-      isForwardlink ?
-      {
-        target: row.content_id || row.backlink_id,
-        source: sourceId
-      }:
-      {
-        source: row.content_id || row.backlink_id,
-        target: sourceId
-      }
+      newLink
     ]
     return {
       nodes: newNodes,
