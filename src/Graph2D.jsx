@@ -1,12 +1,12 @@
 import React from 'react';
 import {ForceGraph2D} from 'react-force-graph';
 
-export default function Graph2D(props) {
+function Graph2D(props, graphRef) {
   const {graphData, handleNodeClick, handleLeftClick} = props;
-  const fgRef = React.useRef(null);
+  // const fgRef = React.useRef(null);
   return (
     <ForceGraph2D
-      ref={fgRef}
+      ref={graphRef}
       graphData={graphData}
       // backgroundColor="#000003"
       backgroundColor="transparent"
@@ -48,3 +48,5 @@ export default function Graph2D(props) {
     </ForceGraph2D>
   )
 }
+
+export default React.memo(React.forwardRef(Graph2D));

@@ -28,7 +28,8 @@ function ExpandedContainer(props) {
     setLastNetworkData,
     setBacklinksToShow,
     setForwardlinksToShow,
-    setActiveExpandedNodeId
+    setActiveExpandedNodeId,
+    focusNode
   } = props;
   const miniSearchRef = React.useRef(null);
 
@@ -52,6 +53,7 @@ function ExpandedContainer(props) {
             setForwardlinksToShow={setForwardlinksToShow}
             setLastNetworkData={setLastNetworkData}
             setActiveExpandedNodeId={setActiveExpandedNodeId}
+            focusNode={focusNode}
           ></NodeExpanded>
         ))}
       </Rows>

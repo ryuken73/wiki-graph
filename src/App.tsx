@@ -12,7 +12,8 @@ import {
   getLinksOfNode,
   removeNodes,
   getNodeTextById,
-  getNumberOfNodes
+  getNumberOfNodes,
+  genFocusNode
 } from './js/graphHandlers.js';
 import './App.css'
 import ExpandedContainer from './Components/ExpandedContainer';
@@ -63,6 +64,10 @@ function App() {
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
+  const graphRef = React.useRef(null);
+
+  const focusNode2D = genFocusNode(graphRef, '2D');
+
   // get initial network data
   React.useEffect( () => {
     getBacklinksByContentId(contentId)
@@ -98,6 +103,7 @@ function App() {
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
+    // focusNode2D(node)
   }, []);
   const expandNodeWithForwardLinks = React.useCallback(async (node) => {
     console.log('node click', node);
@@ -148,6 +154,7 @@ function App() {
   return (
     <Container>
       <Graph2D
+        ref={graphRef}
         graphData={lastNetworkData}
         handleNodeClick={expandNode}
         handleLeftClick={expandNodeWithForwardLinks}
@@ -175,6 +182,7 @@ function App() {
           setBacklinksToShow={setBacklinksToShow}
           setForwardlinksToShow={setForwardlinkToShow}
           setActiveExpandedNodeId={setActiveExpandedNodeId}
+          focusNode={focusNode2D}
         ></ExpandedContainer>
         <ForwardlinkContainer
           lastNetworkData={lastNetworkData}

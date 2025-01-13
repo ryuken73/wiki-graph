@@ -37,4 +37,17 @@ export const getNodeTextById = (lastNetworkData, nodeId) => {
 export const getNumberOfNodes = (lastNetworkData) => {
   return lastNetworkData.nodes.length;
 }
+
+export const genFocusNode = (graphRef, dimension) => (node) => {
+  const distance = 40;
+  const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+  const TRANSITION_MS = 1000;
+  console.log(graphRef)
+  if(dimension === '2D'){
+    console.log('center to', node.x, node.y)
+    graphRef.current.centerAt( node.x, node.y, TRANSITION_MS)
+    // graphRef.current.centerAt();
+  }
+}
   

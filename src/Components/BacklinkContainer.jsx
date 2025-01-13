@@ -14,7 +14,7 @@ function BacklinkContainer(props) {
     lastNetworkData, 
     activeExpandedNodeId, 
     backlinksToShow,
-    expandNode
+    expandNode,
   } = props;
   const title = backlinksToShow.length > 0  ?  `Backlinks(${backlinksToShow.length})` : 'Backlinks';
   return (

@@ -22,11 +22,13 @@ function NodeExpanded(props) {
     setLastNetworkData, 
     setBacklinksToShow,
     setForwardlinksToShow,
-    setActiveExpandedNodeId
+    setActiveExpandedNodeId,
+    focusNode
   } = props;
   const [isShowAll, setIsShowAll] = React.useState(false);
   const onClickTitle = React.useCallback((event) => {
     const id = event.target.id;
+    const clickedNode = lastNetworkData.nodes.find(node => node.id === id);
     setActiveExpandedNodeId(id);
     const backlinkNodes = extractBacklinks(lastNetworkData, id);
     setBacklinksToShow(backlinkNodes)
@@ -34,6 +36,7 @@ function NodeExpanded(props) {
     const forwardlinkNodes = extractForwardlinks(lastNetworkData, id);
     setForwardlinksToShow(forwardlinkNodes)
     console.log('forwardlinkNodes', forwardlinkNodes)
+    focusNode(clickedNode)
   }, [lastNetworkData])
   const toggleShowsAllBacklinks = React.useCallback((event) => {
     const {id} = event.target;
