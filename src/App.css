@@ -3,9 +3,24 @@
   /* margin: 0 auto; */
   /* padding: 2rem; */
   text-align: center;
-  background: radial-gradient(
+  /* background: radial-gradient(
       farthest-corner at 10px 10px,
-      maroon 1%, black);
+      maroon 1%, black); */
+  /* background-color: #3b3d42;
+  background-image: url("https://www.transparenttextures.com/patterns/3px-tile.png"); */
+/* background-color: #020017;
+background-image: url("https://www.transparenttextures.com/patterns/beige-paper.png"); */
+/* background-color: #420000;
+background-image: url("https://www.transparenttextures.com/patterns/bo-play.png"); */
+/* background-color: #000000;
+background-image: url("https://www.transparenttextures.com/patterns/wall-4-light.png"); */
+background-color: #000000;
+background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+/* background-color: #000000;
+background-image: url("https://www.transparenttextures.com/patterns/wall-4-light.png"); */
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
 }
 
 .logo {
