@@ -14,7 +14,7 @@ const isNewNode = (row, prevResult) => {
 }
 
 const isDupLink = (newLink, connectedId, prevNetwork) => {
-  console.log(newLink.target, newLink.source, connectedId)
+  // console.log(newLink.target, newLink.source, connectedId)
   const newLinkSourceId = newLink.source;
   const newLinkTargetId = newLink.target;
   const prevLinks = prevNetwork.links;
@@ -43,6 +43,25 @@ export const extractForwardlinks = (networkData, centerId) => {
     return link.source.id === centerId;
   })
   return [...new Set(linksRelated.map(link => link.target))];
+}
+const _setNeighborsNLinksToEachNode = (networkData) => {
+  const links = [...networkData.links];
+  const nodes = [...networkData.nodes];
+  links.forEach(link => {
+    const srcNode = nodes.find(node => node.id === link.source || node.id === link.source.id)
+    const tgtNode = nodes.find(node => node.id === link.target || node.id === link.target.id)
+    // add neighbors to each node
+    !srcNode.neighbors && (srcNode.neighbors = []);
+    !tgtNode.neighbors && (tgtNode.neighbors = []);
+    srcNode.neighbors.push(tgtNode);
+    tgtNode.neighbors.push(srcNode);
+    // add links to each node
+    !srcNode.links && (srcNode.links = []);
+    !tgtNode.links && (tgtNode.links = []);
+    srcNode.links.push(link);
+    tgtNode.links.push(link);
+  })
+  return {nodes, links} 
 }
 
 export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents, isForwardlink=false) => {
@@ -92,7 +111,8 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
       links: newLinks
     }
   }, prevResult)
-  console.log('gData=', gData)
+  const gDataWithNeighborsNLinks = _setNeighborsNLinksToEachNode(gData)
+  console.log('gData=', gDataWithNeighborsNLinks)
   // if(gData.links.length === 0){
   //   return gData;
   // }
@@ -113,5 +133,5 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
   //   a.links.push(link);
   //   b.links.push(link);
   // });
-  return gData;
+  return gDataWithNeighborsNLinks;
 }
