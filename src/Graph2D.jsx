@@ -3,27 +3,36 @@ import {ForceGraph2D} from 'react-force-graph';
 
 function Graph2D(props, graphRef) {
   const {graphData, handleNodeClick, handleLeftClick} = props;
-  const [hightlightNodes, setHighligntNodes] = React.useState(new Set());
+  const [highlightNodes, setHighligntNodes] = React.useState(new Set());
+  const [highlightLinks, setHighligntLinks] = React.useState(new Set());
   // const fgRef = React.useRef(null);
 
   const updateHighlight = React.useCallback(() => {
-    setHighligntNodes(hightlightNodes)
+    setHighligntNodes(highlightNodes)
   }, [])
 
   const handleNodeHover = React.useCallback((node) => {
-    setHighligntNodes((hightlightNodes) => {
-      hightlightNodes.clear();
+    setHighligntNodes((highlightNodes) => {
+      highlightNodes.clear();
       if(node){
         console.log(node, node.neighbors)
-        hightlightNodes.add(node);
-        node.neighbors.forEach(neighbor => hightlightNodes.add(neighbor));
+        highlightNodes.add(node);
+        node.neighbors.forEach(neighbor => highlightNodes.add(neighbor));
       }
-      return hightlightNodes
+      return highlightNodes
     })
-    // hightlightNodes.clear();
+    setHighligntLinks((highlightLinks) => {
+      highlightLinks.clear();
+      if(node){
+        console.log(node, node.links)
+        node.links.forEach(link => highlightLinks.add(link));
+      }
+      return highlightLinks
+    })
+    // highlightNodes.clear();
     // if(node){
-    //   hightlightNodes.add(node);
-    //   node.neighbors.forEach(neighbor => hightlightNodes.add(neighbor));
+    //   highlightNodes.add(node);
+    //   node.neighbors.forEach(neighbor => highlightNodes.add(neighbor));
     //   updateHighlight();
     // }
   }, [])
@@ -33,7 +42,8 @@ function Graph2D(props, graphRef) {
       graphData={graphData}
       // backgroundColor="#000003"
       backgroundColor="transparent"
-      linkColor={()=>'rgba(255,255,255,0.1)'}
+      linkColor={(link)=> highlightLinks.has(link)? 'rgba(234, 239, 44,0.5)': 'rgba(255,255,255,0.2)'}
+      linkWidth={(link)=> highlightLinks.has(link) ? 5: 1}
       onNodeClick={handleLeftClick}
       onNodeRightClick={handleNodeClick}
       linkDirectionalArrowLength={0}
@@ -61,7 +71,7 @@ function Graph2D(props, graphRef) {
         ctx.fillStyle = node.color;
         ctx.fillText(label, node.x, node.y);
 
-        const needHighlight = hightlightNodes.has(node);
+        const needHighlight = highlightNodes.has(node);
         if(needHighlight){
           ctx.lineWidth = 0.5;
           ctx.beginPath();
