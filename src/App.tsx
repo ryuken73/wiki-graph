@@ -19,8 +19,14 @@ import './App.css'
 import ExpandedContainer from './Components/ExpandedContainer';
 import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
+import AutoComplete from './Components/AutoComplete.jsx';
 
 const Container = styled.div``
+const AbsoluteBoxForSearch = styled.div`
+  position: absolute;
+  top: 5vh;
+  left: 5%;
+`
 const AbsoluteBoxForNodesShown = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -159,6 +165,9 @@ function App() {
         handleNodeClick={expandNode}
         handleLeftClick={expandNodeWithForwardLinks}
       ></Graph2D>
+      <AbsoluteBoxForSearch>
+        <AutoComplete></AutoComplete>
+      </AbsoluteBoxForSearch>
       <AbsoluteBoxForNodesShown>
         <ActiveExpandedNode>
           {activeExpandedNodeId !== null ? (

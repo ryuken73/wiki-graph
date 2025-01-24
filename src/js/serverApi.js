@@ -14,3 +14,9 @@ export const getForwardlinksByBacklinkId = async (backlinkId) => {
   console.log(rows)
   return rows
 }
+export const searchWiki = async (inputVal) => {
+  const personData = await fetch(`${API_URL}/search/${inputVal}`);
+  const jsonResult = await personData.json();
+  console.log(jsonResult);
+  return jsonResult
+}
