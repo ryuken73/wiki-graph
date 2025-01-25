@@ -51,15 +51,19 @@ const _setNeighborsNLinksToEachNode = (networkData) => {
     const srcNode = nodes.find(node => node.id === link.source || node.id === link.source.id)
     const tgtNode = nodes.find(node => node.id === link.target || node.id === link.target.id)
     // add neighbors to each node
-    !srcNode.neighbors && (srcNode.neighbors = []);
-    !tgtNode.neighbors && (tgtNode.neighbors = []);
-    srcNode.neighbors.push(tgtNode);
-    tgtNode.neighbors.push(srcNode);
+    if(srcNode){
+      !srcNode.neighbors && (srcNode.neighbors = []);
+      srcNode.neighbors.push(tgtNode);
+    }
+    if(tgtNode){
+      !tgtNode.neighbors && (tgtNode.neighbors = []);
+      tgtNode.neighbors.push(srcNode);
+    }
     // add links to each node
-    !srcNode.links && (srcNode.links = []);
-    !tgtNode.links && (tgtNode.links = []);
-    srcNode.links.push(link);
-    tgtNode.links.push(link);
+    srcNode && !srcNode.links && (srcNode.links = []);
+    tgtNode && !tgtNode.links && (tgtNode.links = []);
+    srcNode && srcNode.links.push(link);
+    tgtNode && tgtNode.links.push(link);
   })
   return {nodes, links} 
 }
@@ -111,6 +115,7 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
       links: newLinks
     }
   }, prevResult)
+  console.log('gData before setNeighbors=', gData);
   const gDataWithNeighborsNLinks = _setNeighborsNLinksToEachNode(gData)
   console.log('gData=', gDataWithNeighborsNLinks)
   // if(gData.links.length === 0){

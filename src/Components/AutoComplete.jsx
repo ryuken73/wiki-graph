@@ -1,8 +1,11 @@
 import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import {searchWiki} from '../js/serverApi.js';
+import './autosuggest.css'
 
-function AutoComplete() {
+
+function AutoComplete(props) {
+  const {onSuggestSelected} = props;
   const [inputValue, setInputValue] = React.useState('');
   const [suggestions, setSuggestions] = React.useState([]);
   const onChangeInput = React.useCallback((event, {newValue, method}) => {
@@ -14,6 +17,18 @@ function AutoComplete() {
       setSuggestions(result.slice(0,100));
     })
   }, [])
+  const clearSuggestion = React.useCallback(() => {
+      setSuggestions([]);
+  }, [])
+  const getSuggestionValue = React.useCallback((suggestion) => {
+    console.log('selected:', suggestion);
+    const node = {
+      ...suggestion,
+      backlinkId: suggestion.backlink_id
+    }
+    // onSuggestSelected(node);
+    return suggestion.text;
+  }, []);
   const renderSuggestion = React.useCallback((suggestion, {query}) => {
     const suggestionText = suggestion.text;
     return (
@@ -30,7 +45,10 @@ function AutoComplete() {
     <Autosuggest
       suggestions={suggestions}
       onSuggestionsFetchRequested={requestSearch}
+      onSuggestionsClearRequested={clearSuggestion}
       renderSuggestion={renderSuggestion}
+      getSuggestionValue={getSuggestionValue}
+      // alwaysRenderSuggestions={true}
       inputProps={inputProps}
 
     ></Autosuggest>

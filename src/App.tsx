@@ -166,7 +166,9 @@ function App() {
         handleLeftClick={expandNodeWithForwardLinks}
       ></Graph2D>
       <AbsoluteBoxForSearch>
-        <AutoComplete></AutoComplete>
+        <AutoComplete
+          onSuggestSelected={expandNodeWithForwardLinks}
+        ></AutoComplete>
       </AbsoluteBoxForSearch>
       <AbsoluteBoxForNodesShown>
         <ActiveExpandedNode>
