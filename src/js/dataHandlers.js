@@ -69,21 +69,21 @@ const _setNeighborsNLinksToEachNode = (networkData) => {
 }
 
 export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, includeOnlyContents, isForwardlink=false) => {
-  const gData = rows.reduce((acct, row, index) => {
+  const gData = rows.reduce((prevNetwork, row, index) => {
     if(includeOnlyContents){
       if(row.content_id === null){
-        return acct
+        return prevNetwork
       }
     }
     // console.log(`${row.backlink_text} is not just backlink. add `)
-    const newNodes = isNewNode(row, prevResult) ?
+    const newNodes = isNewNode(row, prevNetwork) ?
     [
-      ...acct.nodes,
+      ...prevNetwork.nodes,
       {
         // id: row.content_id || row.backlink_id,
         contentId: row.content_id,
         backlinkId: row.backlink_id,
-        text: row.backlink_text,
+        text: row.node_text,
         color: row.content_id ? COLORS[row.primary_category] : COLORS.other,
         isContent: row.content_id ? true : false,
         primaryCategory: row.primary_category || 'none',
@@ -93,7 +93,7 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
         },
       }
     ]:[
-      ...acct.nodes
+      ...prevNetwork.nodes
     ]
 
     const newLink = isForwardlink ? {
@@ -104,10 +104,10 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
       target: sourceId
     }
 
-    const newLinks = isDupLink(newLink, sourceId, prevResult) ? [
-      ...acct.links
+    const newLinks = isDupLink(newLink, sourceId, prevNetwork) ? [
+      ...prevNetwork.links
     ] : [
-      ...acct.links,
+      ...prevNetwork.links,
       newLink
     ]
     return {
@@ -118,25 +118,5 @@ export const mkNetworkData = (rows, sourceId, prevResult={nodes:[], links:[]}, i
   console.log('gData before setNeighbors=', gData);
   const gDataWithNeighborsNLinks = _setNeighborsNLinksToEachNode(gData)
   console.log('gData=', gDataWithNeighborsNLinks)
-  // if(gData.links.length === 0){
-  //   return gData;
-  // }
-  // gData.links.forEach(link => {
-  //   console.log(link)
-  //   // const a = gData.nodes[link.source];
-  //   // const b = gData.nodes[link.target];
-  //   const a = gData.nodes.find(node => node.id === link.source);
-  //   const b = gData.nodes.find(node => node.id === link.target);
-  //   console.log(a, b)
-  //   !a.neighbors && (a.neighbors = []);
-  //   !b.neighbors && (b.neighbors = []);
-  //   a.neighbors.push(b);
-  //   b.neighbors.push(a);
-
-  //   !a.links && (a.links = []);
-  //   !b.links && (b.links = []);
-  //   a.links.push(link);
-  //   b.links.push(link);
-  // });
   return gDataWithNeighborsNLinks;
 }
