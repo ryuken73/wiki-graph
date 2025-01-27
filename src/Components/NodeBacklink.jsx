@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {getBacklinksByContentId} from '../js/serverApi.js';
-import {mkNetworkData} from '../js/dataHandlers.js';
+import {expandNetworkData} from '../js/dataHandlers.js';
 import {
   RowContainer,
   Node,
@@ -28,7 +28,7 @@ function NodeBacklink(props) {
       const includeOnlyContents = isShowAll;
       const rows = await getBacklinksByContentId(id)
       setLastNetworkData((lastNetworkData) => {
-        const newNetworkData = mkNetworkData(rows, id, lastNetworkData, includeOnlyContents);
+        const newNetworkData = expandNetworkData(rows, id, lastNetworkData, includeOnlyContents);
         return newNetworkData
       })
     })

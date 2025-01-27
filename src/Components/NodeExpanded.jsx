@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {getBacklinksByContentId} from '../js/serverApi.js';
 import {
-  mkNetworkData, 
+  expandNetworkData, 
   extractBacklinks,
   extractForwardlinks
 } from '../js/dataHandlers.js';
@@ -44,7 +44,7 @@ function NodeExpanded(props) {
       const includeOnlyContents = isShowAll;
       const rows = await getBacklinksByContentId(id)
       setLastNetworkData((lastNetworkData) => {
-        const newNetworkData = mkNetworkData(rows, id, lastNetworkData, includeOnlyContents);
+        const newNetworkData = expandNetworkData(rows, id, lastNetworkData, includeOnlyContents);
         return newNetworkData
       })
     })
