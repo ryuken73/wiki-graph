@@ -17,7 +17,7 @@ function Graph2D(props, graphRef) {
       if(node){
         console.log(node, node.neighbors)
         highlightNodes.add(node);
-        node.neighbors.forEach(neighbor => highlightNodes.add(neighbor));
+        node.neighbors?.forEach(neighbor => highlightNodes.add(neighbor));
       }
       return highlightNodes
     })
@@ -25,7 +25,7 @@ function Graph2D(props, graphRef) {
       highlightLinks.clear();
       if(node){
         console.log(node, node.links)
-        node.links.forEach(link => highlightLinks.add(link));
+        node.links?.forEach(link => highlightLinks.add(link));
       }
       return highlightLinks
     })
