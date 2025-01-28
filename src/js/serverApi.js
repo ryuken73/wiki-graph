@@ -14,6 +14,20 @@ export const getForwardlinksByBacklinkId = async (backlinkId) => {
   console.log(rows)
   return rows
 }
+export const getNodeByContentId = async (ContentId) => {
+  const personData = await fetch(`${API_URL}/nodeByContentId/${ContentId}`);
+  const jsonResult = await personData.json();
+  const {rows, rowCount} = jsonResult;
+  console.log(rows)
+  return rows
+}
+export const getNodeByBacklinkId = async (backlinkId) => {
+  const personData = await fetch(`${API_URL}/nodeByBacklinkId/${backlinkId}`);
+  const jsonResult = await personData.json();
+  const {rows, rowCount} = jsonResult;
+  console.log(rows)
+  return rows
+}
 export const searchWiki = async (inputVal) => {
   const personData = await fetch(`${API_URL}/search/${inputVal}`);
   const jsonResult = await personData.json();

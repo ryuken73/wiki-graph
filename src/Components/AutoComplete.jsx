@@ -26,7 +26,8 @@ function AutoComplete(props) {
       ...suggestion,
       backlinkId: suggestion.backlink_id
     }
-    // onSuggestSelected(node);
+    const isNodeContent = suggestion.content_id !== null;
+    onSuggestSelected(node.id, isNodeContent);
     return suggestion.text;
   }, []);
   const renderSuggestion = React.useCallback((suggestion, {query}) => {

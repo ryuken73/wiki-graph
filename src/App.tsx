@@ -4,9 +4,14 @@ import styled from 'styled-components';
 import Graph2D from './Graph2D'
 import {
   getBacklinksByContentId,
-  getForwardlinksByBacklinkId
+  getForwardlinksByBacklinkId,
+  getNodeByContentId,
+  getNodeByBacklinkId,
 } from './js/serverApi.js';
-import {mkNetworkData} from './js/dataHandlers.js';
+import {
+  expandNetworkData,
+  addNewNodeNExpandNetworkData
+} from './js/dataHandlers.js';
 import {
   getNodeIdsConnected, 
   getLinksOfNode,
@@ -65,8 +70,10 @@ const initialNode = {
 }
 
 function App() {
-  const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[initialNode], links:[]});
-  const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
+  // const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[initialNode], links:[]});
+  // const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
+  const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[], links:[]});
+  const [nodesExpanded, setNodesExpanded] = React.useState([]);
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
@@ -74,18 +81,29 @@ function App() {
 
   const focusNode2D = genFocusNode(graphRef, '2D');
 
+  const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
+    const nodeInfo = isNodeContent ? await getNodeByContentId(nodeId) : await getNodeByBacklinkId(nodeId);
+    const expandNodes = await getBacklinksByContentId(nodeId)
+    const newNode = nodeInfo[0];
+    const includeOnlyContents = true;
+    setLastNetworkData((lastNetworkData) => {
+      const isForwarding = true;
+      const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
+      const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
+      setNodesExpanded(nodes => {
+        const isDup = nodes.some(existingNode => existingNode.id === addedNode.id);
+        return isDup ? nodes : [addedNode, ...nodes]
+      })
+      setActiveExpandedNodeId(addedNode.id);
+      return newNetworkData;
+    })
+  }, []);
+
   // get initial network data
   React.useEffect( () => {
-    getBacklinksByContentId(contentId)
-    .then((result: unknown) => {
-      console.log(result)
-      const includeOnlyContents = true;
-      setLastNetworkData((lastNetworkData) => {
-        const newNetworkData = mkNetworkData(result, contentId, lastNetworkData, includeOnlyContents);
-        return newNetworkData;
-      })
-    })
-  }, [])
+    const IS_NODE_CONTENT = true;
+    addNewNode(contentId, IS_NODE_CONTENT);
+  }, [addNewNode])
   const expandNode = React.useCallback(async (node) => {
     console.log('node click:', node)
     const {id, isContent} = node;
@@ -99,10 +117,10 @@ function App() {
     console.log(node);
     const includeOnlyContents = true;
     const rows = await getBacklinksByContentId(id)
-    // const newNetworkData = mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
+    // const newNetworkData = expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
     // setLastNetworkData(newNetworkData)
     setLastNetworkData(lastNetworkData => {
-      return mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
+      return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
     })
     setNodesExpanded(nodes => {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
@@ -118,7 +136,7 @@ function App() {
     const isForwardlink = true;
     const rows = await getForwardlinksByBacklinkId(backlinkId)
     setLastNetworkData(lastNetworkData => {
-      return mkNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
+      return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     })
     setNodesExpanded(nodes => {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
@@ -167,7 +185,7 @@ function App() {
       ></Graph2D>
       <AbsoluteBoxForSearch>
         <AutoComplete
-          onSuggestSelected={expandNodeWithForwardLinks}
+          onSuggestSelected={addNewNode}
         ></AutoComplete>
       </AbsoluteBoxForSearch>
       <AbsoluteBoxForNodesShown>
