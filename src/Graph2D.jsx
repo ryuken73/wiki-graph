@@ -1,7 +1,9 @@
 import React from 'react';
 import {ForceGraph2D} from 'react-force-graph';
+import {useWindowSize} from '@react-hook/window-size';
 
 function Graph2D(props, graphRef) {
+  const [width, height] = useWindowSize()
   const {graphData, handleNodeClick, handleLeftClick} = props;
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
@@ -38,6 +40,8 @@ function Graph2D(props, graphRef) {
   }, [])
   return (
     <ForceGraph2D
+      width={width}
+      height={height}
       ref={graphRef}
       graphData={graphData}
       // backgroundColor="#000003"
