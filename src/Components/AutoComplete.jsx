@@ -3,6 +3,7 @@ import Autosuggest from 'react-autosuggest';
 import {searchWiki} from '../js/serverApi.js';
 import './autosuggest.css'
 import styled from 'styled-components';
+import _ from 'lodash';
 
 const Container = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ function AutoComplete(props) {
   const onChangeInput = React.useCallback((event, {newValue, method}) => {
     setInputValue(newValue);
   }, [])
-  const requestSearch = React.useCallback(({value}) => {
+  const requestSearch = React.useCallback((value) => {
     setIsLoading(true);
     searchWiki(value)
     .then(result => {
@@ -34,6 +35,12 @@ function AutoComplete(props) {
       setSuggestions([]);
     })
   }, [])
+  const debouncedReqSearch = React.useMemo((value) => {
+    return _.debounce((value) => requestSearch(value), 200)
+  }, [])
+  const requestSuggestion = ({value}) => {
+    debouncedReqSearch(value);
+  }
   const clearSuggestion = React.useCallback(() => {
       setSuggestions([]);
   }, [])
@@ -63,7 +70,7 @@ function AutoComplete(props) {
     <Container>
       <Autosuggest
         suggestions={suggestions}
-        onSuggestionsFetchRequested={requestSearch}
+        onSuggestionsFetchRequested={requestSuggestion}
         onSuggestionsClearRequested={clearSuggestion}
         renderSuggestion={renderSuggestion}
         getSuggestionValue={getSuggestionValue}

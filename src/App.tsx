@@ -87,7 +87,7 @@ function App() {
     const newNode = nodeInfo[0];
     const includeOnlyContents = true;
     setLastNetworkData((lastNetworkData) => {
-      const isForwarding = true;
+      const isForwarding = false;
       const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
       const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
       setNodesExpanded(nodes => {
