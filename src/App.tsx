@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 // import {ForceGraph2D} from 'react-force-graph';
-import Graph2D from './Graph2D'
+import Graph2D from './Graph2D';
+import Backdrop from './Components/Backdrop';
 import {
   getBacklinksByContentId,
   getForwardlinksByBacklinkId,
@@ -77,11 +78,13 @@ function App() {
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
+  const [showBackdrop, setShowBackdrop] = React.useState(false);
   const graphRef = React.useRef(null);
 
   const focusNode2D = genFocusNode(graphRef, '2D');
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
+    setShowBackdrop(true)
     const nodeInfo = isNodeContent ? await getNodeByContentId(nodeId) : await getNodeByBacklinkId(nodeId);
     const expandNodes = isNodeContent ? await getBacklinksByContentId(nodeId) : await getForwardlinksByBacklinkId(nodeId)
     const newNode = nodeInfo[0];
@@ -95,6 +98,7 @@ function App() {
         return isDup ? nodes : [addedNode, ...nodes]
       })
       setActiveExpandedNodeId(addedNode.id);
+      setShowBackdrop(false)
       return newNetworkData;
     })
   }, []);
@@ -107,9 +111,11 @@ function App() {
 
   const expandNode = React.useCallback(async (node) => {
     console.log('node click:', node)
+    setShowBackdrop(true)
     const {id, isContent} = node;
     console.log(isContent)
     if(!isContent){
+      setShowBackdrop(false)
       return false
     }
     // if(nodesExpanded.some(node => node.id === id)){
@@ -128,10 +134,12 @@ function App() {
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
+    setShowBackdrop(false)
     // focusNode2D(node)
   }, []);
   const expandNodeWithForwardLinks = React.useCallback(async (node) => {
     console.log('node click', node);
+    setShowBackdrop(true)
     const {backlinkId} = node;
     const includeOnlyContents = true;
     const isForwardlink = true;
@@ -144,6 +152,7 @@ function App() {
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
+    setShowBackdrop(false)
   }, [])
 
   const removeNode = React.useCallback((event) => {
@@ -178,6 +187,10 @@ function App() {
 
   return (
     <Container>
+      <Backdrop
+        open={showBackdrop}
+        setOpen={setShowBackdrop}
+      ></Backdrop>
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
