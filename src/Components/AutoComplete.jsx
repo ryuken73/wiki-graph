@@ -2,19 +2,36 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import {searchWiki} from '../js/serverApi.js';
 import './autosuggest.css'
+import styled from 'styled-components';
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+`
+const LoadingText = styled.div`
+  color: white;
+  margin-left: 10px;
+`
 
 
 function AutoComplete(props) {
   const {onSuggestSelected} = props;
+  const [isLoading, setIsLoading] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const [suggestions, setSuggestions] = React.useState([]);
   const onChangeInput = React.useCallback((event, {newValue, method}) => {
     setInputValue(newValue);
   }, [])
   const requestSearch = React.useCallback(({value}) => {
+    setIsLoading(true);
     searchWiki(value)
     .then(result => {
+      setIsLoading(false);
       setSuggestions(result.slice(0,100));
+    })
+    .catch(err => {
+      setIsLoading(false);
+      setSuggestions([]);
     })
   }, [])
   const clearSuggestion = React.useCallback(() => {
@@ -38,21 +55,26 @@ function AutoComplete(props) {
 
   }, [])
   const inputProps = {
-    placeholder: '검색할 사람',
+    placeholder: '네트워크에 추가',
     value: inputValue,
     onChange: onChangeInput
   }
   return (
-    <Autosuggest
-      suggestions={suggestions}
-      onSuggestionsFetchRequested={requestSearch}
-      onSuggestionsClearRequested={clearSuggestion}
-      renderSuggestion={renderSuggestion}
-      getSuggestionValue={getSuggestionValue}
-      // alwaysRenderSuggestions={true}
-      inputProps={inputProps}
+    <Container>
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={requestSearch}
+        onSuggestionsClearRequested={clearSuggestion}
+        renderSuggestion={renderSuggestion}
+        getSuggestionValue={getSuggestionValue}
+        // alwaysRenderSuggestions={true}
+        inputProps={inputProps}
 
-    ></Autosuggest>
+      ></Autosuggest>
+      {isLoading && (
+        <LoadingText>searching...</LoadingText>
+      )}
+    </Container>
   )
 }
 
