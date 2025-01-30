@@ -54,6 +54,7 @@ function Graph2D(props, graphRef) {
       linkDirectionalArrowRelPos={1}  
       linkDirectionalParticles={1}
       onEngineStop={() => console.log('engine stops')}
+      // onEngineStop={() => graphRef.current.zoomToFit(100, 100)}
       onNodeDragEnd={node => {
         node.fx = node.x;
         node.fy = node.y;

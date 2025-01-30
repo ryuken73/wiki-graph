@@ -83,11 +83,11 @@ function App() {
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     const nodeInfo = isNodeContent ? await getNodeByContentId(nodeId) : await getNodeByBacklinkId(nodeId);
-    const expandNodes = await getBacklinksByContentId(nodeId)
+    const expandNodes = isNodeContent ? await getBacklinksByContentId(nodeId) : await getForwardlinksByBacklinkId(nodeId)
     const newNode = nodeInfo[0];
     const includeOnlyContents = true;
     setLastNetworkData((lastNetworkData) => {
-      const isForwarding = false;
+      const isForwarding = !isNodeContent;
       const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
       const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
       setNodesExpanded(nodes => {
@@ -102,8 +102,9 @@ function App() {
   // get initial network data
   React.useEffect( () => {
     const IS_NODE_CONTENT = true;
-    addNewNode(contentId, IS_NODE_CONTENT);
+    // addNewNode(contentId, IS_NODE_CONTENT);
   }, [addNewNode])
+
   const expandNode = React.useCallback(async (node) => {
     console.log('node click:', node)
     const {id, isContent} = node;
