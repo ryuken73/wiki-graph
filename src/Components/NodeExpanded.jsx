@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CustomCheckbox from './CustomCheckbox';
 import {getBacklinksByContentId} from '../js/serverApi.js';
 import {
   expandNetworkData, 
@@ -23,6 +24,8 @@ function NodeExpanded(props) {
     setBacklinksToShow,
     setForwardlinksToShow,
     setActiveExpandedNodeId,
+    addCheckedNodeList,
+    delCheckedNodeList,
     focusNode
   } = props;
   const [isShowAll, setIsShowAll] = React.useState(false);
@@ -49,9 +52,22 @@ function NodeExpanded(props) {
       })
     })
   }, [])
+  const setChecked = React.useCallback((checked, checkedId) => {
+    console.log(checked, checkedId)
+    if(checked){
+      addCheckedNodeList(checkedId);
+    } else {
+      delCheckedNodeList(checkedId);
+    }
+  }, [])
   return (
     <RowContainer>
       <Node key={node.id}>
+        <CustomCheckbox
+          id={node.id}
+          // checked={checked}
+          setChecked={setChecked} 
+        ></CustomCheckbox>
         <Title
           id={node.id}
           onClick={onClickTitle}

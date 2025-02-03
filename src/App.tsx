@@ -26,6 +26,7 @@ import ExpandedContainer from './Components/ExpandedContainer';
 import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
 import AutoComplete from './Components/AutoComplete.jsx';
+import NodeHandler from './Components/NodeHandler';
 
 const Container = styled.div``
 const AbsoluteBoxForSearch = styled.div`
@@ -35,7 +36,8 @@ const AbsoluteBoxForSearch = styled.div`
 `
 const AbsoluteBoxForNodesShown = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr 1fr; */
+  grid-template-columns: 1fr;
   grid-gap: 5px;
   position:  absolute;
   top: 15vh;
@@ -79,9 +81,27 @@ function App() {
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
   const [showBackdrop, setShowBackdrop] = React.useState(false);
+  const [checkedNodeList, setCheckedNodeList] = React.useState([]);
   const graphRef = React.useRef(null);
-
   const focusNode2D = genFocusNode(graphRef, '2D');
+
+  console.log(checkedNodeList)
+
+  const addCheckedNodeList = React.useCallback((nodeId) => {
+    const targetNode = nodesExpanded.find(node => node.id === nodeId);
+    setCheckedNodeList((checkedNodeList) => {
+      return [
+        ...checkedNodeList,
+        targetNode
+      ];
+    })
+  }, [nodesExpanded]);
+  const delCheckedNodeList = React.useCallback((nodeId) => {
+    setCheckedNodeList((checkedNodeList) => {
+      const newCheckedNodeList = [...checkedNodeList];
+      return newCheckedNodeList.filter(node => node.id !== nodeId)
+    })
+  }, []);
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     setShowBackdrop(true)
@@ -191,6 +211,9 @@ function App() {
         open={showBackdrop}
         setOpen={setShowBackdrop}
       ></Backdrop>
+      <NodeHandler
+        checkedNodeList={checkedNodeList}
+      ></NodeHandler>
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
@@ -211,12 +234,12 @@ function App() {
             >[{totalNodes}]</TotalNodes>
           )}
         </ActiveExpandedNode>
-        <BacklinkContainer
+        {/* <BacklinkContainer
           lastNetworkData={lastNetworkData}
           expandNode={expandNode}
           activeExpandedNodeId={activeExpandedNodeId}
           backlinksToShow={backlinksToShow}
-        ></BacklinkContainer>
+        ></BacklinkContainer> */}
         <ExpandedContainer
           nodesExpanded={nodesExpanded}
           removeNode={removeNode}
@@ -225,14 +248,17 @@ function App() {
           setBacklinksToShow={setBacklinksToShow}
           setForwardlinksToShow={setForwardlinkToShow}
           setActiveExpandedNodeId={setActiveExpandedNodeId}
+          addCheckedNodeList={addCheckedNodeList}
+          delCheckedNodeList={delCheckedNodeList}
           focusNode={focusNode2D}
+        
         ></ExpandedContainer>
-        <ForwardlinkContainer
+        {/* <ForwardlinkContainer
           lastNetworkData={lastNetworkData}
           expandNode={expandNode}
           activeExpandedNodeId={activeExpandedNodeId}
           forwardlinksToShow={forwardlinksToShow}
-        ></ForwardlinkContainer>
+        ></ForwardlinkContainer> */}
       </AbsoluteBoxForNodesShown>
     </Container>
   )

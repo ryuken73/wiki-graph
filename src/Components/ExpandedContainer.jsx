@@ -29,6 +29,8 @@ function ExpandedContainer(props) {
     setBacklinksToShow,
     setForwardlinksToShow,
     setActiveExpandedNodeId,
+    addCheckedNodeList,
+    delCheckedNodeList,
     focusNode
   } = props;
   const miniSearchRef = React.useRef(null);
@@ -53,6 +55,8 @@ function ExpandedContainer(props) {
             setForwardlinksToShow={setForwardlinksToShow}
             setLastNetworkData={setLastNetworkData}
             setActiveExpandedNodeId={setActiveExpandedNodeId}
+            addCheckedNodeList={addCheckedNodeList}
+            delCheckedNodeList={delCheckedNodeList}
             focusNode={focusNode}
           ></NodeExpanded>
         ))}
