@@ -21,6 +21,7 @@ const Container = styled(Box)`
         left: 0;
         right: 0;
         margin: auto;
+        z-index: 20;
     }
 `
 

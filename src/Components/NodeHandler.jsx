@@ -18,7 +18,6 @@ const ButtonContainer = styled(Box)`
     align-items: center;
     justify-content: center;
     flex: 1;
-    z-index: 10;
 `
 const Helper = (props) => {
   const {checkedNodeList=[], clearChecked=()=>{}} = props;
@@ -35,7 +34,7 @@ const Helper = (props) => {
     },[clearChecked])
 
     return (
-        <SnackBar hidden={hidden} containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.dark1}}>
+        <SnackBar hidden={hidden} containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.playerLight4}}>
             <Box flex="1" justifyContent="center">
                 <TextBox fontSize="15px" textAlign="center" color="white" text={text}></TextBox>
             </Box>
