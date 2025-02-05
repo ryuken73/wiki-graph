@@ -14,6 +14,8 @@ import {
   addNewNodeNExpandNetworkData
 } from './js/dataHandlers.js';
 import {
+  isLastLeafNode,
+  notInNodes,
   getNodeIdsConnected, 
   getLinksOfNode,
   removeNodes,
@@ -102,6 +104,13 @@ function App() {
       return newCheckedNodeList.filter(node => node.id !== nodeId)
     })
   }, []);
+  const postExpandTask = React.useCallback((node) => {
+    setNodesExpanded((nodes) => {
+      const isDup = nodes.some(existingNode => existingNode.id === node.id);
+      return isDup ? nodes : [node, ...nodes]
+    })
+    setActiveExpandedNodeId(node.id);
+  }, [])
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     setShowBackdrop(true)
@@ -113,15 +122,11 @@ function App() {
       const isForwarding = !isNodeContent;
       const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
       const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
-      setNodesExpanded(nodes => {
-        const isDup = nodes.some(existingNode => existingNode.id === addedNode.id);
-        return isDup ? nodes : [addedNode, ...nodes]
-      })
-      setActiveExpandedNodeId(addedNode.id);
+      postExpandTask(addedNode)
       setShowBackdrop(false)
       return newNetworkData;
     })
-  }, []);
+  }, [postExpandTask]);
 
   // get initial network data
   React.useEffect( () => {
@@ -129,65 +134,48 @@ function App() {
     // addNewNode(contentId, IS_NODE_CONTENT);
   }, [addNewNode])
 
-  const expandNode = React.useCallback(async (node) => {
+  const expandNode = React.useCallback(async (node, isForwardlink=false) => {
     console.log('node click:', node)
     setShowBackdrop(true)
-    const {id, isContent} = node;
+    const {id, backlinkId, isContent} = node;
     console.log(isContent)
     if(!isContent){
       setShowBackdrop(false)
       return false
     }
-    // if(nodesExpanded.some(node => node.id === id)){
-    //   return false
-    // }
     console.log(node);
     const includeOnlyContents = true;
-    const rows = await getBacklinksByContentId(id)
-    // const newNetworkData = expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
-    // setLastNetworkData(newNetworkData)
-    setLastNetworkData(lastNetworkData => {
-      return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents);
-    })
-    setNodesExpanded(nodes => {
-      const isDup = nodes.some(existingNode => existingNode.id === node.id);
-      return isDup ? nodes : [node, ...nodes]
-    })
-    setActiveExpandedNodeId(node.id);
-    setShowBackdrop(false)
-    // focusNode2D(node)
-  }, []);
-  const expandNodeWithForwardLinks = React.useCallback(async (node) => {
-    console.log('node click', node);
-    setShowBackdrop(true)
-    const {backlinkId} = node;
-    const includeOnlyContents = true;
-    const isForwardlink = true;
-    const rows = await getForwardlinksByBacklinkId(backlinkId)
+    const rows = isForwardlink ?
+      await getForwardlinksByBacklinkId(backlinkId) :
+      await getBacklinksByContentId(id)
     setLastNetworkData(lastNetworkData => {
       return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     })
-    setNodesExpanded(nodes => {
-      const isDup = nodes.some(existingNode => existingNode.id === node.id);
-      return isDup ? nodes : [node, ...nodes]
-    })
-    setActiveExpandedNodeId(node.id);
+    postExpandTask(node);
     setShowBackdrop(false)
-  }, [])
+    // focusNode2D(node)
+  }, [postExpandTask]);
+
 
   const removeNode = React.useCallback((event) => {
-    const id = event.target.id
+    const centerNodeId = event.target ? event.target.id:  event.id;
+    console.log('removeNode centerNodeId:', centerNodeId)
     setLastNetworkData((lastNetworkData) => {
-      const includeSelf = true;
-      const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, id, includeSelf);
-      const nodeIdsExpanded = nodesExpanded.map(node => node.id);
-      const nodeIdsToDelete = removeNodes(nodeIdsConnected, nodeIdsExpanded);
-      console.log(nodeIdsToDelete)
-      const newLinks = [...lastNetworkData.links].filter(link => {
-        return !nodeIdsToDelete.includes(link.source.id) && !nodeIdsToDelete.includes(link.target.id);
+      const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, centerNodeId);
+      const lastLeafNodeIds = nodeIdsConnected.filter((nodeId) => {
+        return isLastLeafNode(lastNetworkData, centerNodeId, nodeId)
       })
+      const KEEP_EXPANDED_BUT_NO_LEAF_NODE = true;
+      const withCenterNode = [centerNodeId, ...lastLeafNodeIds];
+      const nodeIdsToDelete = KEEP_EXPANDED_BUT_NO_LEAF_NODE ?
+        [centerNodeId, ...(lastLeafNodeIds.filter(nodeId => notInNodes(nodesExpanded, nodeId)))]:
+        withCenterNode
+      console.log(nodeIdsToDelete)
       const newNodes = [...lastNetworkData.nodes].filter(node => {
         return !nodeIdsToDelete.includes(node.id)
+      })
+      const newLinks = [...lastNetworkData.links].filter(link => {
+        return !nodeIdsToDelete.includes(link.source.id) && !nodeIdsToDelete.includes(link.target.id);
       })
       return {
         nodes: newNodes,
@@ -196,7 +184,7 @@ function App() {
     })
     setNodesExpanded(nodesExpanded => {
       return [...nodesExpanded].filter(node => {
-        return node.id !== id;
+        return node.id !== centerNodeId;
       })
     })
   }, [nodesExpanded])
@@ -213,12 +201,13 @@ function App() {
       ></Backdrop>
       <NodeHandler
         checkedNodeList={checkedNodeList}
+        setCheckedNodeList={setCheckedNodeList}
+        removeNode={removeNode}
       ></NodeHandler>
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
-        handleNodeClick={expandNode}
-        handleLeftClick={expandNodeWithForwardLinks}
+        expandNode={expandNode}
       ></Graph2D>
       <AbsoluteBoxForSearch>
         <AutoComplete

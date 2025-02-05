@@ -4,13 +4,22 @@ import {useWindowSize} from '@react-hook/window-size';
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
-  const {graphData, handleNodeClick, handleLeftClick} = props;
+  const {graphData, expandNode} = props;
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
   // const fgRef = React.useRef(null);
 
   const updateHighlight = React.useCallback(() => {
     setHighligntNodes(highlightNodes)
+  }, [])
+
+  const handleLeftClick = React.useCallback((node) => {
+    const isForwarding = true;
+    expandNode(node, isForwarding)
+  }, [])
+  const handleRightClick = React.useCallback((node) => {
+    const isForwarding = true;
+    expandNode(node, isForwarding)
   }, [])
 
   const handleNodeHover = React.useCallback((node) => {
@@ -49,7 +58,7 @@ function Graph2D(props, graphRef) {
       linkColor={(link)=> highlightLinks.has(link)? 'rgba(234, 239, 44,0.5)': 'rgba(255,255,255,0.2)'}
       linkWidth={(link)=> highlightLinks.has(link) ? 5: 1}
       onNodeClick={handleLeftClick}
-      onNodeRightClick={handleNodeClick}
+      onNodeRightClick={handleRightClick}
       linkDirectionalArrowLength={0}
       linkDirectionalArrowRelPos={1}  
       linkDirectionalParticles={1}

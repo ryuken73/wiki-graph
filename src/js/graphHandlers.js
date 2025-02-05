@@ -1,8 +1,8 @@
 
-export const getNodeIdsConnected = (lastNetworkData, nodeId, includeSelf) => {
+export const getNodeIdsConnected = (lastNetworkData, nodeId) => {
   const {links} = lastNetworkData;
   const neighbors = links.reduce((acct, link) => {
-    console.log(acct)
+    // console.log(acct)
     if(link.source.id === nodeId){
       return [...acct, link.target.id]
     }
@@ -11,7 +11,7 @@ export const getNodeIdsConnected = (lastNetworkData, nodeId, includeSelf) => {
     }
     return [...acct]
   }, [])
-  return includeSelf ? [nodeId, ...neighbors]:neighbors;
+  return neighbors;
 }
 
 export const getLinksOfNode = (lastNetworkData, nodeId) => {
@@ -19,6 +19,28 @@ export const getLinksOfNode = (lastNetworkData, nodeId) => {
   return newLinks.filter(link => {
     return link.source.id === nodeId || link.target.id === nodeId;
   })
+}
+
+export const isLastLeafNode = (lastNetwork, centerNodeId, nodeId) => {
+  const {links} = lastNetwork;
+  const hasOtherConnectedNode = links.some(link => {
+    let isLinkOfOtherNode = false;
+    const isSourceNode = link.source.id === nodeId;
+    const isTargetNode = link.target.id === nodeId;
+    if(isSourceNode){
+      isLinkOfOtherNode = link.target.id !== centerNodeId;
+    }
+    if(isTargetNode){
+      isLinkOfOtherNode = link.source.id !== centerNodeId;
+    }
+    return isLinkOfOtherNode;
+  })
+  return !hasOtherConnectedNode
+}
+
+export const notInNodes = (nodes, nodeId) => {
+  console.log(nodes, nodeId)
+  return nodes.every(node => node.id !== nodeId);
 }
 
 export const removeNodes = (nodesFrom, nodesToRemove) => {
