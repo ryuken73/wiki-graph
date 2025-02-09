@@ -30,7 +30,13 @@ const SnackBar = props => {
     const {hidden=true, direction="left", children} = props;
     const {containerProps} = props;
     return (
-        <Slide direction={direction} timeout={500} in={!hidden} mountOnEnter unmountOnExit>
+        <Slide 
+          direction={direction} 
+          timeout={500} 
+          in={!hidden} 
+          mountOnEnter 
+          unmountOnExit
+        >
             <Container {...containerProps}>
                 {children}
             </Container>
