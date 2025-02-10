@@ -137,7 +137,6 @@ function App() {
   }, [addNewNode])
 
   const expandNode = React.useCallback(async (node, isForwardlink=false) => {
-    console.log('node click:', node)
     setShowBackdrop(true)
     const {id, backlinkId, isContent} = node;
     console.log(isContent)
@@ -181,30 +180,17 @@ function App() {
     })
   })
 
-  const removeNode = React.useCallback((eventOrId, hiddenParam) => {
+  const removeNode = React.useCallback((eventOrId, hiddenParams) => {
     const fromEvent = eventOrId && eventOrId.nativeEvent; 
     const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
-    const keepCenterNode = hiddenParam
-    const KEEP_EXPANDED_BUT_NO_LEAF_NODE = true;
-    console.log('removeNode centerNodeId:', centerNodeId, keepCenterNode)
     setLastNetworkData((lastNetworkData) => {
-      const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, centerNodeId);
-      const lastLeafNodeIds = nodeIdsConnected.filter((nodeId) => {
-        return isLastLeafNode(lastNetworkData, centerNodeId, nodeId)
-      })
-      // const withCenterNode = [centerNodeId, ...lastLeafNodeIds];
-      const nodeIdsToDeleteFiltered = KEEP_EXPANDED_BUT_NO_LEAF_NODE ?
-        [...(lastLeafNodeIds.filter(nodeId => notInNodes(nodesExpanded, nodeId)))]:
-        [...lastLeafNodeIds]
-      const nodeIdsToDelete = keepCenterNode ? nodeIdsToDeleteFiltered: [centerNodeId, ...nodeIdsToDeleteFiltered];
-
-      console.log(nodeIdsToDelete)
+      const onlyNeighborsId = getOnlyNeighbors(lastNetworkData, centerNodeId);
       const newNodes = [...lastNetworkData.nodes].filter(node => {
-        return !nodeIdsToDelete.includes(node.id)
+        const onlyNeighborNode = onlyNeighborsId.includes(node.id);
+        const isCenterNode = node.id === centerNodeId;
+        return !onlyNeighborNode || !isCenterNode;
       })
-      const newLinks = [...lastNetworkData.links].filter(link => {
-        return !nodeIdsToDelete.includes(link.source.id) && !nodeIdsToDelete.includes(link.target.id);
-      })
+      const newLinks = getLinksOfNode(lastNetworkData, centerNodeId);
       return {
         nodes: newNodes,
         links: newLinks
@@ -215,7 +201,7 @@ function App() {
         return node.id !== centerNodeId;
       })
     })
-  }, [nodesExpanded])
+  }, [])
 
   console.log('lastNetwokData=', lastNetworkData)
   const totalNodes = getNumberOfNodes(lastNetworkData);
