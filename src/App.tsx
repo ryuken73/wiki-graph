@@ -156,20 +156,23 @@ function App() {
     // focusNode2D(node)
   }, [postExpandTask]);
 
-
-  const removeNode = React.useCallback((event) => {
-    const centerNodeId = event.target ? event.target.id:  event.id;
-    console.log('removeNode centerNodeId:', centerNodeId)
+  const removeNode = React.useCallback((eventOrId, hiddenParam) => {
+    const fromEvent = eventOrId && eventOrId.nativeEvent; 
+    const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
+    const keepCenterNode = hiddenParam
+    const KEEP_EXPANDED_BUT_NO_LEAF_NODE = true;
+    console.log('removeNode centerNodeId:', centerNodeId, keepCenterNode)
     setLastNetworkData((lastNetworkData) => {
       const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, centerNodeId);
       const lastLeafNodeIds = nodeIdsConnected.filter((nodeId) => {
         return isLastLeafNode(lastNetworkData, centerNodeId, nodeId)
       })
-      const KEEP_EXPANDED_BUT_NO_LEAF_NODE = true;
-      const withCenterNode = [centerNodeId, ...lastLeafNodeIds];
-      const nodeIdsToDelete = KEEP_EXPANDED_BUT_NO_LEAF_NODE ?
-        [centerNodeId, ...(lastLeafNodeIds.filter(nodeId => notInNodes(nodesExpanded, nodeId)))]:
-        withCenterNode
+      // const withCenterNode = [centerNodeId, ...lastLeafNodeIds];
+      const nodeIdsToDeleteFiltered = KEEP_EXPANDED_BUT_NO_LEAF_NODE ?
+        [...(lastLeafNodeIds.filter(nodeId => notInNodes(nodesExpanded, nodeId)))]:
+        [...lastLeafNodeIds]
+      const nodeIdsToDelete = keepCenterNode ? nodeIdsToDeleteFiltered: [centerNodeId, ...nodeIdsToDeleteFiltered];
+
       console.log(nodeIdsToDelete)
       const newNodes = [...lastNetworkData.nodes].filter(node => {
         return !nodeIdsToDelete.includes(node.id)
@@ -203,6 +206,7 @@ function App() {
         checkedNodeList={checkedNodeList}
         setCheckedNodeList={setCheckedNodeList}
         removeNode={removeNode}
+        expandNode={expandNode}
       ></NodeHandler>
       <Graph2D
         ref={graphRef}

@@ -23,29 +23,48 @@ const Helper = (props) => {
   const {
     checkedNodeList=[], 
     setCheckedNodeList,
-    removeNode
+    removeNode,
+    expandNode
   } = props;
     const checkedCount = checkedNodeList.length;
     const hidden = checkedCount === 0 || checkedCount === false;
     const text = `선택한 ${checkedCount} 노드를`;
 
     const shrinkCheckedNode = React.useCallback(() => {
-    },[])
+      console.log('click shrink')
+      checkedNodeList.forEach(node => {
+        // console.log('shrink node:', node)
+        const KEEP_CENTER_NODE = true;
+        removeNode(node.id, KEEP_CENTER_NODE);
+      })
+      setCheckedNodeList([]);
+    },[checkedNodeList])
 
     const expandCheckedNode = React.useCallback(() => {
-    },[])
+      console.log('click expand')
+      checkedNodeList.forEach(node => {
+        console.log('expand node:', node)
+        const IS_FORWARDING = true;
+        expandNode(node, IS_FORWARDING);
+      })
+      setCheckedNodeList([]);
+    },[checkedNodeList])
 
-    const removeCheckedNode = React.useCallback(() => {
+    const removeCheckedNode = React.useCallback((e) => {
       console.log('click remove')
       checkedNodeList.forEach(node => {
-        console.log('remove node:', node)
-        removeNode(node);
+        // console.log('remove node:', node)
+        const KEEP_CENTER_NODE = false;
+        removeNode(node.id, KEEP_CENTER_NODE);
       })
       setCheckedNodeList([]);
     },[checkedNodeList])
 
     return (
-        <SnackBar hidden={hidden} containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.playerLight4}}>
+        <SnackBar 
+          hidden={hidden} 
+          containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.playerLight4}}
+          >
             <Box flex="1" justifyContent="center">
                 <TextBox fontSize="15px" textAlign="center" color="white" text={text}></TextBox>
             </Box>

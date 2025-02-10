@@ -18,7 +18,7 @@ function Graph2D(props, graphRef) {
     expandNode(node, isForwarding)
   }, [])
   const handleRightClick = React.useCallback((node) => {
-    const isForwarding = true;
+    const isForwarding = false;
     expandNode(node, isForwarding)
   }, [])
 
