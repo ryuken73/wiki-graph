@@ -22,6 +22,7 @@ const SEARCH_OPTION = {
 function ExpandedContainer(props) {
   // eslint-disable-next-line react/prop-types
   const {
+    checkedNodeList,
     nodesExpanded, 
     removeNode, 
     lastNetworkData,
@@ -49,6 +50,7 @@ function ExpandedContainer(props) {
           <NodeExpanded
             key={node.id}
             node={node}
+            checkedNodeList={checkedNodeList}
             removeNode={removeNode}
             lastNetworkData={lastNetworkData}
             setBacklinksToShow={setBacklinksToShow}

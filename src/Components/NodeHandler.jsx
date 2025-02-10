@@ -24,8 +24,10 @@ const Helper = (props) => {
     checkedNodeList=[], 
     setCheckedNodeList,
     removeNode,
-    expandNode
+    expandNode,
+    shrinkNode
   } = props;
+    console.log('checkedNodeList=',checkedNodeList)
     const checkedCount = checkedNodeList.length;
     const hidden = checkedCount === 0 || checkedCount === false;
     const text = `선택한 ${checkedCount} 노드를`;
@@ -33,9 +35,8 @@ const Helper = (props) => {
     const shrinkCheckedNode = React.useCallback(() => {
       console.log('click shrink')
       checkedNodeList.forEach(node => {
-        // console.log('shrink node:', node)
-        const KEEP_CENTER_NODE = true;
-        removeNode(node.id, KEEP_CENTER_NODE);
+        console.log('shrink node:', node)
+        shrinkNode(node.id);
       })
       setCheckedNodeList([]);
     },[checkedNodeList])
@@ -66,7 +67,7 @@ const Helper = (props) => {
           containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.playerLight4}}
           >
             <Box flex="1" justifyContent="center">
-                <TextBox fontSize="15px" textAlign="center" color="white" text={text}></TextBox>
+              <TextBox fontSize="15px" textAlign="center" color="white" text={text}></TextBox>
             </Box>
             <ButtonContainer>
               <Tooltip title="그래프 축소">

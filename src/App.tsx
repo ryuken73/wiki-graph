@@ -18,6 +18,8 @@ import {
   notInNodes,
   getNodeIdsConnected, 
   getLinksOfNode,
+  getOnlyNeighbors,
+  isOnlyLink,
   removeNodes,
   getNodeTextById,
   getNumberOfNodes,
@@ -156,6 +158,29 @@ function App() {
     // focusNode2D(node)
   }, [postExpandTask]);
 
+  const shrinkNode = React.useCallback((eventOrId, hiddenParam) => {
+    const fromEvent = eventOrId && eventOrId.nativeEvent; 
+    const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
+    setLastNetworkData((lastNetworkData) => {
+      const onlyNeighborsId = getOnlyNeighbors(lastNetworkData, centerNodeId);
+      const newNodes = [...lastNetworkData.nodes].filter(node => {
+        return !onlyNeighborsId.includes(node.id)
+      })
+      const newLinks = [...lastNetworkData.links].filter(link => {
+        return !isOnlyLink(link, centerNodeId, onlyNeighborsId)
+      })
+      return {
+        nodes: newNodes,
+        links: newLinks
+      };
+    })
+    setNodesExpanded(nodesExpanded => {
+      return [...nodesExpanded].filter(node => {
+        return node.id !== centerNodeId;
+      })
+    })
+  })
+
   const removeNode = React.useCallback((eventOrId, hiddenParam) => {
     const fromEvent = eventOrId && eventOrId.nativeEvent; 
     const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
@@ -207,6 +232,7 @@ function App() {
         setCheckedNodeList={setCheckedNodeList}
         removeNode={removeNode}
         expandNode={expandNode}
+        shrinkNode={shrinkNode}
       ></NodeHandler>
       <Graph2D
         ref={graphRef}
@@ -234,6 +260,7 @@ function App() {
           backlinksToShow={backlinksToShow}
         ></BacklinkContainer> */}
         <ExpandedContainer
+          checkedNodeList={checkedNodeList}
           nodesExpanded={nodesExpanded}
           removeNode={removeNode}
           lastNetworkData={lastNetworkData}

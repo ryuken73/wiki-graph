@@ -18,6 +18,7 @@ import {
 function NodeExpanded(props) {
   const {
     node, 
+    checkedNodeList,
     removeNode, 
     lastNetworkData,
     setLastNetworkData, 
@@ -60,12 +61,13 @@ function NodeExpanded(props) {
       delCheckedNodeList(checkedId);
     }
   }, [])
+  const isChecked = checkedNodeList.some(nodeChecked => nodeChecked.id === node.id)
   return (
     <RowContainer>
       <Node key={node.id}>
         <CustomCheckbox
           id={node.id}
-          // checked={checked}
+          checked={isChecked}
           setChecked={setChecked} 
         ></CustomCheckbox>
         <Title

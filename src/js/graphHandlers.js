@@ -21,8 +21,8 @@ export const getLinksOfNode = (lastNetworkData, nodeId) => {
   })
 }
 
-export const isLastLeafNode = (lastNetwork, centerNodeId, nodeId) => {
-  const {links} = lastNetwork;
+export const isLastLeafNode = (lastNetworkData, centerNodeId, nodeId) => {
+  const {links} = lastNetworkData;
   const hasOtherConnectedNode = links.some(link => {
     let isLinkOfOtherNode = false;
     const isSourceNode = link.source.id === nodeId;
@@ -36,6 +36,28 @@ export const isLastLeafNode = (lastNetwork, centerNodeId, nodeId) => {
     return isLinkOfOtherNode;
   })
   return !hasOtherConnectedNode
+}
+
+export const getOnlyNeighbors = (lastNetworkData, centerNodeId) => {
+  const nodeIdsConnected = getNodeIdsConnected(lastNetworkData, centerNodeId);
+  const lastLeafNodeIds = nodeIdsConnected.filter((nodeId) => {
+    return isLastLeafNode(lastNetworkData, centerNodeId, nodeId)
+  })
+  return lastLeafNodeIds;
+}
+export const getOnlyLinks = (lastNetworkData, centerNodeId, onlyNeighborsIds) => {
+  return [...lastNetworkData.links].filter(link => {
+    const isOutLink = link.source.id === centerNodeId && onlyNeighborsIds.includes(link.target.id);
+    const isInLink = link.target.id === centerNodeId && onlyNeighborsIds.includes(link.source.id);
+    return isOutLink || isInLink;
+  })
+}
+export const isOnlyLink = (link, centerNodeId, onlyNeighborsIds) => {
+  console.log(link, centerNodeId, onlyNeighborsIds)
+  const isOutLink = link.source.id === centerNodeId && onlyNeighborsIds.includes(link.target.id);
+  const isInLink = link.target.id === centerNodeId && onlyNeighborsIds.includes(link.source.id);
+  return isOutLink || isInLink;
+
 }
 
 export const notInNodes = (nodes, nodeId) => {
