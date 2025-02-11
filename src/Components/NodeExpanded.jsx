@@ -12,7 +12,8 @@ import {
   Node,
   Title,
   DelButton,
-  TimeStamp
+  LinkCountContainer,
+  LinkCount
 } from './NodeStyles.js'
 
 function NodeExpanded(props) {
@@ -64,28 +65,38 @@ function NodeExpanded(props) {
   const isChecked = checkedNodeList.some(nodeChecked => nodeChecked.id === node.id)
   return (
     <RowContainer>
-      <Node key={node.id}>
-        <CustomCheckbox
-          id={node.id}
-          checked={isChecked}
-          setChecked={setChecked} 
-        ></CustomCheckbox>
-        <Title
-          id={node.id}
-          onClick={onClickTitle}
-        >
-          {node.text}
-        </Title>
-        <DelButton id={node.id} onClick={removeNode}>
-          [Del]
-        </DelButton>
-      </Node>
-      <TimeStamp
-        onClick={toggleShowsAllBacklinks}
+        <Node key={node.id}>
+      <CustomCheckbox
         id={node.id}
-      >
-        backlinks [{node.backlinkCount}]
-      </TimeStamp>
+        checked={isChecked}
+        setChecked={setChecked} 
+      ></CustomCheckbox>
+
+          <Title
+            id={node.id}
+            onClick={onClickTitle}
+          >
+            {node.text}
+          </Title>
+          <DelButton id={node.id} onClick={removeNode}>
+            [Del]
+          </DelButton>
+        </Node>
+        <LinkCountContainer>
+          <LinkCount
+            onClick={toggleShowsAllBacklinks}
+            id={node.id}
+          >
+            IN [{node.backlinkCount}]
+          </LinkCount>
+          <LinkCount
+            onClick={toggleShowsAllBacklinks}
+            id={node.id}
+            style={{marginLeft: 'auto'}}
+          >
+            OUT [{node.forwardlinkCount}]
+          </LinkCount>
+        </LinkCountContainer>
     </RowContainer>
   )
 }

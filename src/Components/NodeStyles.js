@@ -34,7 +34,10 @@ export const DelButton = styled(Action)`
     color: white;
   };
 `
-export const TimeStamp = styled(Action)`
+export const LinkCountContainer = styled.div`
+  display: flex;
+`
+export const LinkCount = styled(Action)`
   font-size: 11px;
   color: #d73232;
   text-align: right;

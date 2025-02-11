@@ -84,7 +84,12 @@ const _mkNewNode = (row) => {
     color: row.content_id ? COLORS[row.primary_category] : COLORS.other,
     isContent: row.content_id ? true : false,
     primaryCategory: row.primary_category || 'none',
-    backlinkCount: parseInt(row.backlink_count),
+    backlinkCount: parseInt(row.backlink_count) || 0,
+    forwardlinkCount: parseInt(row.forwardlink_count) || 0,
+    additionalInfo: row.additional_info_raw,
+    imageName: row.image_name,
+    imageSubdir: row.image_subdir,
+    wikiUrl: row.node_url,
     get id(){
       return this.contentId || this.backlinkId
     },
