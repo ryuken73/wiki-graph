@@ -30,7 +30,7 @@ import ExpandedContainer from './Components/ExpandedContainer';
 import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
 import AutoComplete from './Components/AutoComplete.jsx';
-import NodeHandler from './Components/NodeHandler';
+// import NodeHandler from './Components/NodeHandler';
 
 const Container = styled.div``
 const AbsoluteBoxForSearch = styled.div`
@@ -213,13 +213,13 @@ function App() {
         open={showBackdrop}
         setOpen={setShowBackdrop}
       ></Backdrop>
-      <NodeHandler
+      {/* <NodeHandler
         checkedNodeList={checkedNodeList}
         setCheckedNodeList={setCheckedNodeList}
         removeNode={removeNode}
         expandNode={expandNode}
         shrinkNode={shrinkNode}
-      ></NodeHandler>
+      ></NodeHandler> */}
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
@@ -247,8 +247,11 @@ function App() {
         ></BacklinkContainer> */}
         <ExpandedContainer
           checkedNodeList={checkedNodeList}
+          setCheckedNodeList={setCheckedNodeList}
           nodesExpanded={nodesExpanded}
           removeNode={removeNode}
+          expandNode={expandNode}
+          shrinkNode={shrinkNode}
           lastNetworkData={lastNetworkData}
           setLastNetworkData={setLastNetworkData}
           setBacklinksToShow={setBacklinksToShow}

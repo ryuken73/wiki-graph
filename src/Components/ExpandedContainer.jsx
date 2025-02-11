@@ -3,6 +3,7 @@ import NodeExpanded from './NodeExpanded';
 import MiniSearch from 'minisearch';
 import hangul from 'hangul-js';
 import styled from 'styled-components';
+import NodeHandler from './NodeHandler';
 import {
   Container,
   Rows,
@@ -23,8 +24,11 @@ function ExpandedContainer(props) {
   // eslint-disable-next-line react/prop-types
   const {
     checkedNodeList,
+    setCheckedNodeList,
     nodesExpanded, 
     removeNode, 
+    expandNode,
+    shrinkNode,
     lastNetworkData,
     setLastNetworkData,
     setBacklinksToShow,
@@ -66,6 +70,13 @@ function ExpandedContainer(props) {
       <HistoryCount>
         {nodesExpanded.length} shown
       </HistoryCount>
+      <NodeHandler
+        checkedNodeList={checkedNodeList}
+        setCheckedNodeList={setCheckedNodeList}
+        removeNode={removeNode}
+        expandNode={expandNode}
+        shrinkNode={shrinkNode}
+      ></NodeHandler>
     </Container>
   )
 }

@@ -64,7 +64,7 @@ const Helper = (props) => {
     return (
         <SnackBar 
           hidden={hidden} 
-          containerProps={{width:'300px', height:'40px', opacity:'0.9', bgcolor:colors.playerLight4}}
+          containerProps={{width:'230px', bottom:'-50px', height:'30px', opacity:'0.9', bgcolor:colors.player}}
           >
             <Box flex="1" justifyContent="center">
               <TextBox fontSize="15px" textAlign="center" color="white" text={text}></TextBox>
