@@ -140,11 +140,11 @@ function App() {
   const expandNode = React.useCallback(async (node, isForwardlink=false) => {
     setShowBackdrop(true)
     const {id, backlinkId, isContent} = node;
-    console.log(isContent)
-    if(!isContent){
-      setShowBackdrop(false)
-      return false
-    }
+    // console.log(isContent)
+    // if(!isContent){
+    //   setShowBackdrop(false)
+    //   return false
+    // }
     console.log(node);
     const includeOnlyContents = true;
     const rows = isForwardlink ?
