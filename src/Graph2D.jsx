@@ -1,6 +1,12 @@
 import React from 'react';
 import {ForceGraph2D} from 'react-force-graph';
 import {useWindowSize} from '@react-hook/window-size';
+import {isLinkBiDirectional} from './js/graphHandlers';
+
+const openChildWindow = (wikiUrl, windowFeatures) => {
+  console.log('open', wikiUrl)
+  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=600,${windowFeatures}`);
+}
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
@@ -21,6 +27,20 @@ function Graph2D(props, graphRef) {
     const isForwarding = false;
     expandNode(node, isForwarding)
   }, [])
+  const handleLinkClick = React.useCallback((link, event) => {
+    console.log('source:target-', link.source.id, link.target.id)
+    const hasReverseLink = isLinkBiDirectional(link, graphData.links)
+    const srcNode = link.source;
+    const tgtNode = link.target;
+    if(hasReverseLink){
+      openChildWindow(tgtNode.wikiUrl, "right=0")
+      setTimeout(() => {
+        openChildWindow(srcNode.wikiUrl, "left=0")
+      }, 5000)
+    } else {
+      openChildWindow(srcNode.wikiUrl, "right=0")
+    }
+  })
 
   const handleNodeHover = React.useCallback((node) => {
     setHighligntNodes((highlightNodes) => {
@@ -59,6 +79,7 @@ function Graph2D(props, graphRef) {
       linkWidth={(link)=> highlightLinks.has(link) ? 5: 1}
       onNodeClick={handleLeftClick}
       onNodeRightClick={handleRightClick}
+      onLinkClick={handleLinkClick}
       linkDirectionalArrowLength={0}
       linkDirectionalArrowRelPos={1}  
       linkDirectionalParticles={1}
@@ -72,8 +93,8 @@ function Graph2D(props, graphRef) {
       onNodeHover={handleNodeHover}
       nodeCanvasObject={(node, ctx, globalScale) => {
         const label = node.text;
-        const fontSize = 12/globalScale;
-        ctx.font = `${fontSize}px Sans-Serif`;
+        const fontSize = 14/globalScale;
+        ctx.font = `${fontSize}px SBAggroB`;
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5); // some padding
 

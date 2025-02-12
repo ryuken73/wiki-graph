@@ -14,8 +14,19 @@ export const getNodeIdsConnected = (lastNetworkData, nodeId) => {
   return neighbors;
 }
 
+export const isLinkOfNode = (link, nodeId) => {
+    return link.source.id === nodeId || link.target.id === nodeId;
+}
+export const isLinkBiDirectional = (link, links) => {
+  const srcNode = link.source;
+  const tgtNode = link.target;
+  return links.some(link => {
+    return link.target.id === srcNode.id && link.source.id === tgtNode.id
+  })
+}
+
 export const getLinksOfNode = (lastNetworkData, nodeId) => {
-  const newLinks = [...lastNetworkData.nodes]
+  const newLinks = [...lastNetworkData.links]
   return newLinks.filter(link => {
     return link.source.id === nodeId || link.target.id === nodeId;
   })

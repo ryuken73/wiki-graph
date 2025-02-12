@@ -20,6 +20,7 @@ import {
   getLinksOfNode,
   getOnlyNeighbors,
   isOnlyLink,
+  isLinkOfNode,
   removeNodes,
   getNodeTextById,
   getNumberOfNodes,
@@ -185,12 +186,18 @@ function App() {
     const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
     setLastNetworkData((lastNetworkData) => {
       const onlyNeighborsId = getOnlyNeighbors(lastNetworkData, centerNodeId);
+      console.log('onlyNeighborsId:', onlyNeighborsId)
       const newNodes = [...lastNetworkData.nodes].filter(node => {
         const onlyNeighborNode = onlyNeighborsId.includes(node.id);
         const isCenterNode = node.id === centerNodeId;
-        return !onlyNeighborNode || !isCenterNode;
+        return !onlyNeighborNode && !isCenterNode;
       })
-      const newLinks = getLinksOfNode(lastNetworkData, centerNodeId);
+      console.log('newNodes:', newNodes)
+      // const newLinks = getLinksOfNode(lastNetworkData, centerNodeId);
+      const newLinks = [...lastNetworkData.links].filter(link => {
+        const isConnected = isLinkOfNode(link, centerNodeId);
+        return !isConnected;
+      })
       return {
         nodes: newNodes,
         links: newLinks
