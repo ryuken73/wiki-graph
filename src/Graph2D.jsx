@@ -5,7 +5,7 @@ import {isLinkBiDirectional} from './js/graphHandlers';
 
 const openChildWindow = (wikiUrl, windowFeatures) => {
   console.log('open', wikiUrl)
-  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=600,${windowFeatures}`);
+  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1200,${windowFeatures}`);
 }
 
 function Graph2D(props, graphRef) {

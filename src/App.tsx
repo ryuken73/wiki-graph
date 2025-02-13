@@ -77,6 +77,11 @@ const initialNode = {
   value: 100
 }
 
+const openChildWindow = (wikiUrl, windowFeatures) => {
+  console.log('open', wikiUrl)
+  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1000,${windowFeatures}`);
+}
+
 function App() {
   // const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[initialNode], links:[]});
   // const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
@@ -218,6 +223,12 @@ function App() {
   const totalNodes = getNumberOfNodes(lastNetworkData);
   const activeExpandedText = getNodeTextById(lastNetworkData, activeExpandedNodeId);
 
+  const onClickNodeText = React.useCallback(() => {
+    const node = lastNetworkData.nodes.find(node => node.id === activeExpandedNodeId);
+    const wikiUrl = node.wikiUrl;
+    openChildWindow(wikiUrl)
+  }, [activeExpandedNodeId, lastNetworkData.nodes])
+
   return (
     <Container>
       <Backdrop
@@ -244,7 +255,9 @@ function App() {
       <AbsoluteBoxForNodesShown>
         <ActiveExpandedNode>
           {activeExpandedNodeId !== null ? (
-            <NodeText>{activeExpandedText}</NodeText>
+            <NodeText
+              onClick={onClickNodeText}
+            >{activeExpandedText}</NodeText>
           ) : (
             <TotalNodes 
             >[{totalNodes}]</TotalNodes>
