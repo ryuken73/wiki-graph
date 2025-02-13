@@ -68,7 +68,12 @@ export const isOnlyLink = (link, centerNodeId, onlyNeighborsIds) => {
   const isOutLink = link.source.id === centerNodeId && onlyNeighborsIds.includes(link.target.id);
   const isInLink = link.target.id === centerNodeId && onlyNeighborsIds.includes(link.source.id);
   return isOutLink || isInLink;
-
+}
+export const hasInDirectionLink = (node, links) => {
+  return links.some(link => link.target.id === node.id)
+}
+export const hasOutDirectionLink = (node, links) => {
+  return links.some(link => link.source.id === node.id)
 }
 
 export const notInNodes = (nodes, nodeId) => {

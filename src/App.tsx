@@ -125,7 +125,9 @@ function App() {
       const isForwarding = !isNodeContent;
       const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
       const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
-      postExpandTask(addedNode)
+      setTimeout(() => {
+        postExpandTask(addedNode)
+      }, 150);
       setShowBackdrop(false)
       return newNetworkData;
     })
@@ -151,9 +153,11 @@ function App() {
       await getForwardlinksByBacklinkId(backlinkId) :
       await getBacklinksByContentId(id)
     setLastNetworkData(lastNetworkData => {
+      setTimeout(() => {
+        postExpandTask(node);
+      }, 150)
       return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     })
-    postExpandTask(node);
     setShowBackdrop(false)
     // focusNode2D(node)
   }, [postExpandTask]);

@@ -39,7 +39,8 @@ export const LinkCountContainer = styled.div`
 `
 export const LinkCount = styled(Action)`
   font-size: 11px;
-  color: #d73232;
+  font-weight: 200;
+  color: ${props => props.disabled ? 'dimgrey':'yellow'};
   text-align: right;
-  cursor: pointer;
+  cursor: ${props => !props.disabled && 'pointer'};
 `

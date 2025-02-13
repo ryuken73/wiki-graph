@@ -56,6 +56,7 @@ function ExpandedContainer(props) {
             node={node}
             checkedNodeList={checkedNodeList}
             removeNode={removeNode}
+            expandNode={expandNode}
             lastNetworkData={lastNetworkData}
             setBacklinksToShow={setBacklinksToShow}
             setForwardlinksToShow={setForwardlinksToShow}

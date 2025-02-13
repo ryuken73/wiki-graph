@@ -15,12 +15,17 @@ import {
   LinkCountContainer,
   LinkCount
 } from './NodeStyles.js'
+import {
+  hasInDirectionLink,
+  hasOutDirectionLink
+} from '../js/graphHandlers.js';
 
 function NodeExpanded(props) {
   const {
     node, 
     checkedNodeList,
     removeNode, 
+    expandNode,
     lastNetworkData,
     setLastNetworkData, 
     setBacklinksToShow,
@@ -43,16 +48,13 @@ function NodeExpanded(props) {
     console.log('forwardlinkNodes', forwardlinkNodes)
     focusNode(clickedNode)
   }, [lastNetworkData])
-  const toggleShowsAllBacklinks = React.useCallback((event) => {
-    const {id} = event.target;
-    setIsShowAll( async (isShowAll) => {
-      const includeOnlyContents = isShowAll;
-      const rows = await getBacklinksByContentId(id)
-      setLastNetworkData((lastNetworkData) => {
-        const newNetworkData = expandNetworkData(rows, id, lastNetworkData, includeOnlyContents);
-        return newNetworkData
-      })
-    })
+  const onClickIn = React.useCallback((event) => {
+    const isForwarding = false;
+    expandNode(node, isForwarding)
+  }, [])
+  const onClickOut = React.useCallback((event) => {
+    const isForwarding = true;
+    expandNode(node, isForwarding)
   }, [])
   const setChecked = React.useCallback((checked, checkedId) => {
     console.log(checked, checkedId)
@@ -62,7 +64,12 @@ function NodeExpanded(props) {
       delCheckedNodeList(checkedId);
     }
   }, [])
-  const isChecked = checkedNodeList.some(nodeChecked => nodeChecked.id === node.id)
+  const isChecked = checkedNodeList.some(nodeChecked => nodeChecked.id === node.id);
+  // const isForwardlinkExpaned = React.useMemo(() => hasOutDirectionLink(node, lastNetworkData.links), lastNetworkData);
+  // const isBacklinkExpanded = React.useMemo(() => hasInDirectionLink(node, lastNetworkData.links), lastNetworkData);
+  const isForwardlinkExpaned = hasOutDirectionLink(node, lastNetworkData.links);
+  const isBacklinkExpanded = hasInDirectionLink(node, lastNetworkData.links);
+  console.log(node.text, isForwardlinkExpaned, lastNetworkData)
   return (
     <RowContainer>
         <Node key={node.id}>
@@ -84,15 +91,17 @@ function NodeExpanded(props) {
         </Node>
         <LinkCountContainer>
           <LinkCount
-            onClick={toggleShowsAllBacklinks}
+            onClick={onClickIn}
             id={node.id}
+            disabled={isBacklinkExpanded || node.backlinkCount === 0}
           >
             IN [{node.backlinkCount}]
           </LinkCount>
           <LinkCount
-            onClick={toggleShowsAllBacklinks}
+            onClick={onClickOut}
             id={node.id}
             style={{marginLeft: 'auto'}}
+            disabled={isForwardlinkExpaned || node.forwardlinkCount === 0}
           >
             OUT [{node.forwardlinkCount}]
           </LinkCount>
