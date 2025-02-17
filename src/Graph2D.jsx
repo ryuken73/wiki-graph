@@ -3,22 +3,19 @@ import {ForceGraph2D} from 'react-force-graph';
 import {useWindowSize} from '@react-hook/window-size';
 import {isLinkBiDirectional} from './js/graphHandlers';
 import {getPersonImage} from './js/serverApi.js';
+import noImage from './assets/images/noImage.webp';
 
 const openChildWindow = (wikiUrl, windowFeatures) => {
   console.log('open', wikiUrl)
   window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1200,${windowFeatures}`);
 }
 
-
-const sample_content_id = '정치인_한국_C_007373_윤석열';
- 
 let imageHash = {};
-getPersonImage(sample_content_id)
-.then(result => {
-  console.log('imageBlob:', result)
-  if(result !== null){
-    imageHash[sample_content_id] = URL.createObjectURL(result);
-  }
+let noImageObj;
+fetch(noImage)
+.then(res => res.blob())
+.then(blob => {
+  noImageObj = URL.createObjectURL(blob)
 })
 
 const createImage = (src) => {
@@ -27,10 +24,27 @@ const createImage = (src) => {
   return image
 }
 
+const getImage = async (contentId) => {
+  const cached = imageHash[contentId]
+  console.log(cached)
+  if(cached){
+    return cached;
+  }
+  const imgBlob = await getPersonImage(contentId)
+  if(imgBlob !== null){
+    const objURL = URL.createObjectURL(imgBlob)
+    imageHash[contentId] = objURL;
+    return objURL
+  }
+  imageHash[contentId] = noImageObj;
+  return null;
+}
+
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
   const {graphData, expandNode} = props;
+  const [nodeHovered, setNodeHovered] = React.useState(null);
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
   // const fgRef = React.useRef(null);
@@ -80,6 +94,7 @@ function Graph2D(props, graphRef) {
       }
       return highlightLinks
     })
+    setNodeHovered(node);
     // highlightNodes.clear();
     // if(node){
     //   highlightNodes.add(node);
@@ -111,10 +126,10 @@ function Graph2D(props, graphRef) {
         node.fz = node.z;
       }}
       onNodeHover={handleNodeHover}
-      nodeCanvasObject={(node, ctx, globalScale) => {
+      nodeCanvasObject={async (node, ctx, globalScale) => {
         const label = node.text;
         const fontSize = 14/globalScale;
-        ctx.font = `${fontSize}px SBAggroB`;
+        ctx.font = `normal ${fontSize}px SBAggroB`;
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5); // some padding
 
@@ -132,11 +147,18 @@ function Graph2D(props, graphRef) {
           ctx.beginPath();
           ctx.strokeRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
           ctx.strokeStyle = 'yellow';
-          const image = createImage(imageHash['정치인_한국_C_007373_윤석열']);
-          const imageRatio = image.height / image.width;
-          const width = 70/globalScale;
-          const height = (70*imageRatio)/globalScale;
-          ctx.drawImage(image, node.x, node.y, width, height)
+        }
+        const isHoveredNode = nodeHovered === node
+        if(isHoveredNode){
+          // const image = createImage(imageHash['정치인_한국_C_007373_윤석열']);
+          const imgObjURL = await getImage(node.id);
+          if(imgObjURL){
+            const image = createImage(imgObjURL)
+            const imageRatio = image.height / image.width;
+            const width = 100/globalScale;
+            const height = (100*imageRatio)/globalScale;
+            ctx.drawImage(image, node.x, node.y, width, height)
+          }
         }
 
         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
