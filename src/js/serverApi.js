@@ -34,3 +34,15 @@ export const searchWiki = async (inputVal) => {
   console.log(jsonResult);
   return jsonResult
 }
+export const getPersonImage = async (contentId) => {
+  const personData = await fetch(`${API_URL}/imageByContentId/${contentId}`);
+  const jsonResult = await personData.json();
+  const {rows, rowCount} = jsonResult;
+  if(rowCount === 1){
+    const {image_name, image_subdir} = rows[0]
+    const imgResponse = await fetch(`${API_URL}/${image_subdir}/${image_name}`)
+    const blobResult = await imgResponse.blob();
+    return blobResult;
+  }
+  return null;
+}

@@ -113,6 +113,7 @@ function App() {
     })
   }, []);
   const postExpandTask = React.useCallback((node) => {
+    console.log('postExpandTask node =', node)
     setNodesExpanded((nodes) => {
       const isDup = nodes.some(existingNode => existingNode.id === node.id);
       return isDup ? nodes : [node, ...nodes]
@@ -121,6 +122,7 @@ function App() {
   }, [])
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
+    console.log('addNewNode nodeId =', nodeId)
     setShowBackdrop(true)
     const nodeInfo = isNodeContent ? await getNodeByContentId(nodeId) : await getNodeByBacklinkId(nodeId);
     const expandNodes = isNodeContent ? await getBacklinksByContentId(nodeId) : await getForwardlinksByBacklinkId(nodeId)
@@ -129,7 +131,12 @@ function App() {
     setLastNetworkData((lastNetworkData) => {
       const isForwarding = !isNodeContent;
       const newNetworkData = addNewNodeNExpandNetworkData(newNode, expandNodes, lastNetworkData, includeOnlyContents, isForwarding);
-      const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
+      // const addedNode = newNetworkData.nodes.find(node => node.id === nodeId);
+      const addedNode = newNetworkData.nodes.find(node => {
+        // 새로운 content가 검색엔진에 반영이 되지 않는 경우,
+        // nodeId는 backlink_id인데 networkData에는 content_id로 id가 mapping되어 오류가 발생할 수 있음.
+        return node.id === nodeId || node.backlinkId === nodeId;
+      })
       setTimeout(() => {
         postExpandTask(addedNode)
       }, 150);

@@ -2,11 +2,31 @@ import React from 'react';
 import {ForceGraph2D} from 'react-force-graph';
 import {useWindowSize} from '@react-hook/window-size';
 import {isLinkBiDirectional} from './js/graphHandlers';
+import {getPersonImage} from './js/serverApi.js';
 
 const openChildWindow = (wikiUrl, windowFeatures) => {
   console.log('open', wikiUrl)
   window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1200,${windowFeatures}`);
 }
+
+
+const sample_content_id = '정치인_한국_C_007373_윤석열';
+ 
+let imageHash = {};
+getPersonImage(sample_content_id)
+.then(result => {
+  console.log('imageBlob:', result)
+  if(result !== null){
+    imageHash[sample_content_id] = URL.createObjectURL(result);
+  }
+})
+
+const createImage = (src) => {
+  const image = new Image();
+  image.src = src;
+  return image
+}
+
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
@@ -112,6 +132,11 @@ function Graph2D(props, graphRef) {
           ctx.beginPath();
           ctx.strokeRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
           ctx.strokeStyle = 'yellow';
+          const image = createImage(imageHash['정치인_한국_C_007373_윤석열']);
+          const imageRatio = image.height / image.width;
+          const width = 70/globalScale;
+          const height = (70*imageRatio)/globalScale;
+          ctx.drawImage(image, node.x, node.y, width, height)
         }
 
         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
