@@ -4,6 +4,36 @@ import {useWindowSize} from '@react-hook/window-size';
 import {isLinkBiDirectional} from './js/graphHandlers';
 import {getPersonImage} from './js/serverApi.js';
 import noImage from './assets/images/noImage.webp';
+import styled from 'styled-components';
+
+const ImageContainer = styled.div`
+  position: absolute;
+  display: none;
+  /* width: 100px; */
+  z-index: 10;
+  top: 0; 
+  border-radius: 10px;
+  flex-direction: column;
+  color: white;
+`
+const CustomImg = styled.img`
+  /* width: 100%; */
+  width: 100px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 10px;
+  aspect-ratio: 4/5;
+`
+const Contents = styled.div`
+  width: fit-content;
+  /* background-color: maroon; */
+  backdrop-filter: blur(8px);  
+`
+const Text = styled.div`
+  text-align: left;
+  font-weight: 100;
+  font-size: 12px;
+`
 
 const openChildWindow = (wikiUrl, windowFeatures) => {
   console.log('open', wikiUrl)
@@ -40,6 +70,19 @@ const getImage = async (contentId) => {
   return null;
 }
 
+function positionElement(graph, x, y, element) {
+  const {x:left, y:top} = graph.graph2ScreenCoords(x, y);
+  element.style.top = `${top}px`;
+  element.style.left = `${left + 10}px`;
+  element.style.display = 'flex';
+}
+
+// 사용 예제
+
+const showBox = (ctx, element, x, y) => {
+  positionElement(ctx, x, y, element);
+}
+
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
@@ -47,8 +90,30 @@ function Graph2D(props, graphRef) {
   const [nodeHovered, setNodeHovered] = React.useState(null);
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
+  const [imgSrc, setImgSrc] = React.useState(noImageObj);
   // const fgRef = React.useRef(null);
+  const imgRef = React.useRef(null);
 
+  React.useEffect(() => {
+    if(nodeHovered !== null){
+      getImage(nodeHovered.id)
+      .then(imgObjURL => {
+        if(imgObjURL){
+          // const image = createImage(imgObjURL)
+          // const imageRatio = image.height / image.width;
+          // const width = 100/globalScale;
+          // const height = (100*imageRatio)/globalScale;
+          setImgSrc(imgObjURL);
+        }
+      })
+
+      showBox(graphRef.current, imgRef.current, nodeHovered.x, nodeHovered.y)
+    } else {
+      imgRef.current.style.display = 'none';
+      setImgSrc(noImageObj)
+    }
+    
+  }, [nodeHovered])
   const updateHighlight = React.useCallback(() => {
     setHighligntNodes(highlightNodes)
   }, [])
@@ -102,7 +167,9 @@ function Graph2D(props, graphRef) {
     //   updateHighlight();
     // }
   }, [])
+
   return (
+    <>
     <ForceGraph2D
       width={width}
       height={height}
@@ -143,23 +210,22 @@ function Graph2D(props, graphRef) {
 
         const needHighlight = highlightNodes.has(node);
         if(needHighlight){
-          ctx.lineWidth = 0.5;
+          ctx.lineWidth = 1 /globalScale;
           ctx.beginPath();
           ctx.strokeRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
           ctx.strokeStyle = 'yellow';
         }
-        const isHoveredNode = nodeHovered === node
-        if(isHoveredNode){
-          // const image = createImage(imageHash['정치인_한국_C_007373_윤석열']);
-          const imgObjURL = await getImage(node.id);
-          if(imgObjURL){
-            const image = createImage(imgObjURL)
-            const imageRatio = image.height / image.width;
-            const width = 100/globalScale;
-            const height = (100*imageRatio)/globalScale;
-            ctx.drawImage(image, node.x, node.y, width, height)
-          }
-        }
+        // const isHoveredNode = nodeHovered === node
+        // if(isHoveredNode){
+        //   const imgObjURL = await getImage(node.id);
+        //   if(imgObjURL){
+        //     const image = createImage(imgObjURL)
+        //     const imageRatio = image.height / image.width;
+        //     const width = 100/globalScale;
+        //     const height = (100*imageRatio)/globalScale;
+        //     ctx.drawImage(image, node.x, node.y, width, height)
+        //   }
+        // }
 
         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
       }}
@@ -170,6 +236,17 @@ function Graph2D(props, graphRef) {
       }}
     >
     </ForceGraph2D>
+    <ImageContainer ref={imgRef}>
+      <CustomImg src={imgSrc}></CustomImg>
+      <Contents>
+        {nodeHovered?.additionalInfo?.split('\n')
+        .filter((info, index) => index < 10)
+        .map((info) => {
+          return <Text>{info}</Text>
+        })}
+      </Contents>
+    </ImageContainer>
+    </>
   )
 }
 
