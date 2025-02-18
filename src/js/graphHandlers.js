@@ -102,11 +102,12 @@ export const genFocusNode = (graphRef, dimension) => (node) => {
   const distance = 40;
   const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
 
-  const TRANSITION_MS = 1000;
-  console.log(graphRef)
+  const TRANSITION_MS = 2000;
   if(dimension === '2D'){
     console.log('center to', node.x, node.y)
-    graphRef.current.centerAt( node.x, node.y, TRANSITION_MS)
+    setTimeout(() => {
+      graphRef.current.centerAt( node.x, node.y, TRANSITION_MS)
+    }, 300)
     // graphRef.current.centerAt();
   }
 }

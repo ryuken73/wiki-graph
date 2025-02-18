@@ -119,7 +119,8 @@ function App() {
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
-  }, [])
+    focusNode2D(node)
+  }, [focusNode2D])
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     console.log('addNewNode nodeId =', nodeId)
@@ -171,7 +172,6 @@ function App() {
       return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     })
     setShowBackdrop(false)
-    // focusNode2D(node)
   }, [postExpandTask]);
 
   const shrinkNode = React.useCallback((eventOrId, hiddenParam) => {
