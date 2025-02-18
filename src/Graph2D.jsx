@@ -129,7 +129,7 @@ function Graph2D(props, graphRef) {
       nodeCanvasObject={async (node, ctx, globalScale) => {
         const label = node.text;
         const fontSize = 14/globalScale;
-        ctx.font = `normal ${fontSize}px SBAggroB`;
+        ctx.font = `300 ${fontSize}px SBAggroL`;
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5); // some padding
 
