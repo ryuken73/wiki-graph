@@ -49,7 +49,7 @@ function NodeBacklink(props) {
         onClick={toggleShowsAllBacklinks}
         id={node.id}
       >
-        backlinks [{node.backlinkCount}]
+        backlinks [{node.backlinkCountContent}]
       </TimeStamp>
     </RowContainer>
   )

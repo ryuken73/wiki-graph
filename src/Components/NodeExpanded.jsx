@@ -93,9 +93,9 @@ function NodeExpanded(props) {
           <LinkCount
             onClick={onClickIn}
             id={node.id}
-            disabled={isBacklinkExpanded || node.backlinkCount === 0}
+            disabled={isBacklinkExpanded || node.backlinkCountContent === 0}
           >
-            IN [{node.backlinkCount}]
+            IN [{node.backlinkCountContent}]
           </LinkCount>
           <LinkCount
             onClick={onClickOut}
