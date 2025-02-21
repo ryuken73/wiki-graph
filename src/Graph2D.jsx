@@ -3,6 +3,7 @@ import {ForceGraph2D} from 'react-force-graph';
 import {useWindowSize} from '@react-hook/window-size';
 import {isLinkBiDirectional} from './js/graphHandlers';
 import {getPersonImage} from './js/serverApi.js';
+import ActionButtons from './Components/ActionButtons.jsx';
 import noImage from './assets/images/noImage.webp';
 import styled from 'styled-components';
 
@@ -13,8 +14,10 @@ const ImageContainer = styled.div`
   z-index: 10;
   top: 0; 
   border-radius: 10px;
-  flex-direction: column;
+  /* flex-direction: column; */
+  grid-template-columns: 1fr 1fr;
   color: white;
+  padding-top: 5px;
 `
 const CustomImg = styled.img`
   /* width: 100%; */
@@ -23,6 +26,7 @@ const CustomImg = styled.img`
   object-position: top;
   border-radius: 10px;
   aspect-ratio: 4/5;
+  cursor: pointer;
 `
 const Contents = styled.div`
   width: fit-content;
@@ -35,11 +39,6 @@ const Text = styled.div`
   font-size: 12px;
 `
 
-const openChildWindow = (wikiUrl, windowFeatures) => {
-  console.log('open', wikiUrl)
-  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1200,${windowFeatures}`);
-}
-
 let imageHash = {};
 let noImageObj;
 fetch(noImage)
@@ -48,10 +47,14 @@ fetch(noImage)
   noImageObj = URL.createObjectURL(blob)
 })
 
-const createImage = (src) => {
-  const image = new Image();
-  image.src = src;
-  return image
+const openChildWindow = (wikiUrl, windowFeatures) => {
+  console.log('open', wikiUrl)
+  window.open(`https://namu.wiki${wikiUrl}`, "aa", `width=800,height=1200,${windowFeatures}`);
+}
+
+const getTextWidth = (ctx, text, font = "16px Arial") => {
+    ctx.font = font;
+    return ctx.measureText(text).width;
 }
 
 const getImage = async (contentId) => {
@@ -73,16 +76,14 @@ const getImage = async (contentId) => {
 function positionElement(graph, x, y, element) {
   const {x:left, y:top} = graph.graph2ScreenCoords(x, y);
   element.style.top = `${top}px`;
-  element.style.left = `${left + 10}px`;
-  element.style.display = 'flex';
+  element.style.left = `${left}px`;
+  // element.style.display = 'flex';
+  element.style.display = 'grid';
 }
-
-// 사용 예제
 
 const showBox = (ctx, element, x, y) => {
   positionElement(ctx, x, y, element);
 }
-
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
@@ -93,26 +94,39 @@ function Graph2D(props, graphRef) {
   const [imgSrc, setImgSrc] = React.useState(noImageObj);
   // const fgRef = React.useRef(null);
   const imgRef = React.useRef(null);
+  const ctxRef = React.useRef(null);
+  const globalScaleRef = React.useRef(9);
 
-  React.useEffect(() => {
-    if(nodeHovered !== null){
+  const FONT_SIZE = 14;
+  const FONT_WEIGHT = 300;
+  const FONT_FAMILY = 'SBAggroL';
+
+  const timerRef = React.useRef(null);
+  const showCard = React.useCallback((nodeHovered) => {
+    if(timerRef.current !== null){
+      clearTimeout(timerRef.current);
+    }
+    if(nodeHovered === null){
+      imgRef.current.style.display = 'none';
+      setImgSrc(noImageObj);
+      return;
+    }
+    timerRef.current = setTimeout(() => {
       getImage(nodeHovered.id)
       .then(imgObjURL => {
         if(imgObjURL){
-          // const image = createImage(imgObjURL)
-          // const imageRatio = image.height / image.width;
-          // const width = 100/globalScale;
-          // const height = (100*imageRatio)/globalScale;
           setImgSrc(imgObjURL);
         }
       })
-
-      showBox(graphRef.current, imgRef.current, nodeHovered.x, nodeHovered.y)
-    } else {
-      imgRef.current.style.display = 'none';
-      setImgSrc(noImageObj)
-    }
-    
+      const label = nodeHovered.text;
+      const fontSize = FONT_SIZE/globalScaleRef.current;
+      const font = `${FONT_WEIGHT} ${fontSize}px ${FONT_FAMILY}`;
+      const textWidth = getTextWidth(ctxRef.current, label, font);
+      const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5); // some padding
+      showBox(graphRef.current, imgRef.current, nodeHovered.x - bckgDimensions[0]/2, nodeHovered.y+bckgDimensions[1]/2)
+      setNodeHovered(nodeHovered)
+      timerRef.current = null;
+    }, 100)
   }, [nodeHovered])
   const updateHighlight = React.useCallback(() => {
     setHighligntNodes(highlightNodes)
@@ -139,7 +153,14 @@ function Graph2D(props, graphRef) {
     } else {
       openChildWindow(srcNode.wikiUrl, "right=0")
     }
-  })
+  }, [])
+  const handleImgClick = React.useCallback(() => {
+    const tgtNode = nodeHovered 
+    console.log(tgtNode)
+    if(tgtNode){
+      openChildWindow(tgtNode.wikiUrl, "right=0");
+    }
+  }, [nodeHovered])
 
   const handleNodeHover = React.useCallback((node) => {
     setHighligntNodes((highlightNodes) => {
@@ -159,7 +180,8 @@ function Graph2D(props, graphRef) {
       }
       return highlightLinks
     })
-    setNodeHovered(node);
+    showCard(node);
+
     // highlightNodes.clear();
     // if(node){
     //   highlightNodes.add(node);
@@ -193,10 +215,14 @@ function Graph2D(props, graphRef) {
         node.fz = node.z;
       }}
       onNodeHover={handleNodeHover}
+      onRenderFramePre={(ctx, globalScale) => {
+        ctxRef.current = ctx;
+        globalScaleRef.current = globalScale;
+      }}
       nodeCanvasObject={async (node, ctx, globalScale) => {
         const label = node.text;
-        const fontSize = 14/globalScale;
-        ctx.font = `300 ${fontSize}px SBAggroL`;
+        const fontSize = FONT_SIZE/globalScaleRef.current;
+        ctx.font = `${FONT_WEIGHT} ${fontSize}px ${FONT_FAMILY}`;
         const textWidth = ctx.measureText(label).width;
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.5); // some padding
 
@@ -215,18 +241,6 @@ function Graph2D(props, graphRef) {
           ctx.strokeRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
           ctx.strokeStyle = 'yellow';
         }
-        // const isHoveredNode = nodeHovered === node
-        // if(isHoveredNode){
-        //   const imgObjURL = await getImage(node.id);
-        //   if(imgObjURL){
-        //     const image = createImage(imgObjURL)
-        //     const imageRatio = image.height / image.width;
-        //     const width = 100/globalScale;
-        //     const height = (100*imageRatio)/globalScale;
-        //     ctx.drawImage(image, node.x, node.y, width, height)
-        //   }
-        // }
-
         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
       }}
       nodePointerAreaPaint={(node, color, ctx) => {
@@ -237,7 +251,8 @@ function Graph2D(props, graphRef) {
     >
     </ForceGraph2D>
     <ImageContainer ref={imgRef}>
-      <CustomImg src={imgSrc}></CustomImg>
+      <CustomImg onClick={handleImgClick} src={imgSrc}></CustomImg>
+      <ActionButtons></ActionButtons>
       <Contents>
         {nodeHovered?.additionalInfo?.split('\n')
         .filter((info, index) => index < 10)
