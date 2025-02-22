@@ -114,7 +114,11 @@ const showBox = (ctx, element, x, y) => {
 
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
-  const {graphData, expandNode} = props;
+  const {
+    graphData, 
+    expandNode,
+    removeNode
+  } = props;
   const [nodeHovered, setNodeHovered] = React.useState(null);
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
@@ -297,7 +301,11 @@ function Graph2D(props, graphRef) {
             width={100} 
             height={100*5/4}></Skeleton>
         )}
-        <ActionButtons></ActionButtons>
+        <ActionButtons
+          nodeHovered={nodeHovered}
+          removeNode={removeNode}
+          expandNode={expandNode}
+        ></ActionButtons>
       </RowContainer>
       <Contents>
         {nodeHovered?.additionalInfo?.split('\n')

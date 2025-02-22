@@ -174,7 +174,7 @@ function App() {
     setShowBackdrop(false)
   }, [postExpandTask]);
 
-  const shrinkNode = React.useCallback((eventOrId, hiddenParam) => {
+  const shrinkNode = React.useCallback((eventOrId, direction = 'all') => {
     const fromEvent = eventOrId && eventOrId.nativeEvent; 
     const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
     setLastNetworkData((lastNetworkData) => {
@@ -252,6 +252,7 @@ function App() {
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
+        removeNode={removeNode}
         expandNode={expandNode}
       ></Graph2D>
       <AbsoluteBoxForSearch>
