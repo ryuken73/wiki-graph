@@ -3,11 +3,12 @@ import {ForceGraph2D} from 'react-force-graph';
 import {useWindowSize} from '@react-hook/window-size';
 import {isLinkBiDirectional} from './js/graphHandlers';
 import {getPersonImage} from './js/serverApi.js';
+import Skeleton from '@mui/material/Skeleton';
 import ActionButtons from './Components/ActionButtons.jsx';
 import noImage from './assets/images/noImage.webp';
 import styled from 'styled-components';
 
-const ImageContainer = styled.div`
+const CardContainer = styled.div`
   position: absolute;
   display: none;
   /* width: 100px; */
@@ -18,7 +19,39 @@ const ImageContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   color: white;
   padding-top: 5px;
+  backdrop-filter: blur(10px);  
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  background: maroon;
+  opacity: 0;
+  transition: opacity 0.5s;
 `
+const RowContainer = styled.div`
+  display: flex;
+  justify-content: start;
+`
+const ImageContainer = styled.div`
+  position: relative;
+`
+const Text = styled.div`
+  text-align: left;
+  font-weight: 100;
+  font-size: 12px;
+`
+const ImageInfo = styled(Text)`
+  color: black;
+  font-size: 11px;
+  font-weight: 300;
+  position: absolute;
+  bottom: 7px;
+  /* background: rgba(0,0,0,0.5); */
+  background: rgba(255,255,255,0.6);
+  width: 100px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  text-align: center;
+`
+
 const CustomImg = styled.img`
   /* width: 100%; */
   width: 100px;
@@ -31,12 +64,6 @@ const CustomImg = styled.img`
 const Contents = styled.div`
   width: fit-content;
   /* background-color: maroon; */
-  backdrop-filter: blur(8px);  
-`
-const Text = styled.div`
-  text-align: left;
-  font-weight: 100;
-  font-size: 12px;
 `
 
 let imageHash = {};
@@ -77,8 +104,8 @@ function positionElement(graph, x, y, element) {
   const {x:left, y:top} = graph.graph2ScreenCoords(x, y);
   element.style.top = `${top}px`;
   element.style.left = `${left}px`;
-  // element.style.display = 'flex';
-  element.style.display = 'grid';
+  element.style.display = 'block';
+  element.style.opacity = 1;
 }
 
 const showBox = (ctx, element, x, y) => {
@@ -92,6 +119,7 @@ function Graph2D(props, graphRef) {
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
   const [highlightLinks, setHighligntLinks] = React.useState(new Set());
   const [imgSrc, setImgSrc] = React.useState(noImageObj);
+  const [imgLoaded, setImgLoaded] = React.useState(false);
   // const fgRef = React.useRef(null);
   const imgRef = React.useRef(null);
   const ctxRef = React.useRef(null);
@@ -108,6 +136,7 @@ function Graph2D(props, graphRef) {
     }
     if(nodeHovered === null){
       imgRef.current.style.display = 'none';
+      setImgLoaded(false);
       setImgSrc(noImageObj);
       return;
     }
@@ -115,6 +144,7 @@ function Graph2D(props, graphRef) {
       getImage(nodeHovered.id)
       .then(imgObjURL => {
         if(imgObjURL){
+          setImgLoaded(true);
           setImgSrc(imgObjURL);
         }
       })
@@ -250,9 +280,25 @@ function Graph2D(props, graphRef) {
       }}
     >
     </ForceGraph2D>
-    <ImageContainer ref={imgRef}>
-      <CustomImg onClick={handleImgClick} src={imgSrc}></CustomImg>
-      <ActionButtons></ActionButtons>
+    <CardContainer ref={imgRef}>
+      <RowContainer>
+        {imgLoaded ? (
+          <ImageContainer>
+            <CustomImg onClick={handleImgClick} src={imgSrc}></CustomImg>
+            <ImageInfo>IN[{nodeHovered.backlinkCountContent}] OUT[{nodeHovered.forwardlinkCount}]</ImageInfo>
+          </ImageContainer>
+        ):(
+          <Skeleton 
+            variant='rectangular' 
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.3)',
+              borderRadius: '10px'
+            }} 
+            width={100} 
+            height={100*5/4}></Skeleton>
+        )}
+        <ActionButtons></ActionButtons>
+      </RowContainer>
       <Contents>
         {nodeHovered?.additionalInfo?.split('\n')
         .filter((info, index) => index < 10)
@@ -260,7 +306,7 @@ function Graph2D(props, graphRef) {
           return <Text>{info}</Text>
         })}
       </Contents>
-    </ImageContainer>
+    </CardContainer>
     </>
   )
 }

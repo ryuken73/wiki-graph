@@ -23,6 +23,7 @@ export const Title = styled(Action)`
   overflow: hidden;
   &:hover {
     color: white;
+    font-weight: 300;
   };
 `
 export const DelButton = styled(Action)`
