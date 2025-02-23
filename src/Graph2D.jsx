@@ -290,21 +290,21 @@ function Graph2D(props, graphRef) {
     </ForceGraph2D>
     <CardContainer ref={imgRef}>
       <RowContainer>
-        {imgLoaded ? (
           <ImageContainer>
-            <CustomImg onClick={handleImgClick} src={imgSrc}></CustomImg>
-            <ImageInfo>IN[{nodeHovered.backlinkCountContent}] OUT[{nodeHovered.forwardlinkCount}]</ImageInfo>
+            {imgLoaded ? (
+              <CustomImg onClick={handleImgClick} src={imgSrc}></CustomImg>
+            ):(
+              <Skeleton 
+                variant='rectangular' 
+                sx={{
+                  bgcolor: 'rgba(255,255,255,0.3)',
+                  borderRadius: '10px'
+                }} 
+                width={100} 
+                height={100*6/5}></Skeleton>
+            )}
+            <ImageInfo>IN[{nodeHovered?.backlinkCountContent}] OUT[{nodeHovered?.forwardlinkCount}]</ImageInfo>
           </ImageContainer>
-        ):(
-          <Skeleton 
-            variant='rectangular' 
-            sx={{
-              bgcolor: 'rgba(255,255,255,0.3)',
-              borderRadius: '10px'
-            }} 
-            width={100} 
-            height={100*5/4}></Skeleton>
-        )}
         <ActionButtons
           nodeHovered={nodeHovered}
           removeNode={removeNode}
