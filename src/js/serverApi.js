@@ -14,6 +14,27 @@ export const getForwardlinksByBacklinkId = async (backlinkId) => {
   console.log(rows)
   return rows
 }
+export const getRelatedLinks = async (nodes, direction) => {
+  const postData = nodes.map(node => {
+    const {contentId, backlinkId} = node;
+    return {
+      content_id: contentId, 
+      backlink_id: backlinkId
+    }
+  })
+  const linkType = direction;
+  const personData = await fetch(
+    `${API_URL}/related/${linkType}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(postData)
+    }
+  )
+  const jsonResult = await personData.json();
+  const {rows, rowCount} = jsonResult;
+  console.log(rows)
+  return rows
+}
 export const getNodeByContentId = async (ContentId) => {
   const personData = await fetch(`${API_URL}/nodeByContentId/${ContentId}`);
   const jsonResult = await personData.json();

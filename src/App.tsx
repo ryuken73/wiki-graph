@@ -8,6 +8,7 @@ import {
   getForwardlinksByBacklinkId,
   getNodeByContentId,
   getNodeByBacklinkId,
+  getRelatedLinks
 } from './js/serverApi.js';
 import {
   expandNetworkData,
@@ -174,6 +175,26 @@ function App() {
     setShowBackdrop(false)
   }, [postExpandTask]);
 
+  const expandRelatedNode = React.useCallback(async (nodes, isForwardlink=false) => {
+    console.log('nodes:', nodes)
+    setShowBackdrop(true)
+    const direction = isForwardlink ? 'forwardlink':'backlink'
+    const rows = await getRelatedLinks(nodes, direction);
+    const includeOnlyContents = false;
+      setLastNetworkData(lastNetworkData => {
+        return expandNetworkData(rows, nodes[0].id, lastNetworkData, includeOnlyContents, isForwardlink);
+      })
+      setLastNetworkData(lastNetworkData => {
+        return expandNetworkData(rows, nodes[1].id, lastNetworkData, includeOnlyContents, isForwardlink);
+      })
+    // for(let i=0;i++;i<nodes.length){
+    //   setLastNetworkData(lastNetworkData => {
+    //     return expandNetworkData(rows, nodes[0].id, lastNetworkData, includeOnlyContents, isForwardlink);
+    //   })
+    // }
+    setShowBackdrop(false)
+  }, [])
+
   const shrinkNode = React.useCallback((eventOrId, direction = 'all') => {
     const fromEvent = eventOrId && eventOrId.nativeEvent; 
     const centerNodeId = fromEvent ? eventOrId.target.id : eventOrId ;
@@ -195,7 +216,7 @@ function App() {
         return node.id !== centerNodeId;
       })
     })
-  })
+  }, [])
 
   const removeNode = React.useCallback((eventOrId, hiddenParams) => {
     const fromEvent = eventOrId && eventOrId.nativeEvent; 
@@ -252,8 +273,9 @@ function App() {
       <Graph2D
         ref={graphRef}
         graphData={lastNetworkData}
-        removeNode={removeNode}
         expandNode={expandNode}
+        removeNode={removeNode}
+        expandRelatedNode={expandRelatedNode}
       ></Graph2D>
       <AbsoluteBoxForSearch>
         <AutoComplete
