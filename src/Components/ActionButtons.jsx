@@ -22,7 +22,7 @@ export default function ActionButtons(props) {
     expandNode,
     removeNode
   } = props;
-  const nodeId = nodeHovered.id;
+  const nodeId = nodeHovered?.id;
   const removeNodeHovered = React.useCallback(() => {removeNode(nodeId)}, [nodeId]);
   const expandNodeIn = React.useCallback(() => {expandNode(nodeHovered, false)}, [nodeHovered]);
   const expnadNodeOut = React.useCallback(() => {expandNode(nodeHovered, true)}, [nodeHovered]);
