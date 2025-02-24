@@ -118,7 +118,8 @@ function Graph2D(props, graphRef) {
     graphData, 
     expandNode,
     removeNode,
-    expandRelatedNode
+    expandRelatedNode,
+    setLastNodeExpanded
   } = props;
   const [nodeHovered, setNodeHovered] = React.useState(null);
   const [highlightNodes, setHighligntNodes] = React.useState(new Set());
@@ -245,8 +246,17 @@ function Graph2D(props, graphRef) {
       linkDirectionalArrowLength={0}
       linkDirectionalArrowRelPos={1}  
       linkDirectionalParticles={1}
-      onEngineStop={() => console.log('engine stops')}
-      // onEngineStop={() => graphRef.current.zoomToFit(100, 100)}
+      // onEngineStop={() => console.log('engine stops')}
+      cooldownTime={1000}
+      onEngineStop={() => {
+        console.log('engine stops')
+        setLastNodeExpanded((node) => {
+          if(node === null) return null;
+          graphRef.current.centerAt(node.x, node.y, 2000)
+          return null;
+        })
+        // graphRef.current.zoomToFit(100, 100)
+      }}
       onNodeDragEnd={node => {
         node.fx = node.x;
         node.fy = node.y;

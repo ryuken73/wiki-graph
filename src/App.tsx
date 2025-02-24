@@ -89,6 +89,7 @@ function App() {
   // const [nodesExpanded, setNodesExpanded] = React.useState([initialNode]);
   const [lastNetworkData, setLastNetworkData] = React.useState({nodes:[], links:[]});
   const [nodesExpanded, setNodesExpanded] = React.useState([]);
+  const [lastNodeExpanded, setLastNodeExpanded] = React.useState(null);
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
@@ -121,6 +122,7 @@ function App() {
       return isDup ? nodes : [node, ...nodes]
     })
     setActiveExpandedNodeId(node.id);
+    setLastNodeExpanded(node);
     focusNode2D(node)
   }, [focusNode2D])
 
@@ -281,6 +283,7 @@ function App() {
         expandNode={expandNode}
         removeNode={removeNode}
         expandRelatedNode={expandRelatedNode}
+        setLastNodeExpanded={setLastNodeExpanded}
       ></Graph2D>
       <AbsoluteBoxForSearch>
         <AutoComplete
