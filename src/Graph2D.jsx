@@ -112,6 +112,15 @@ const showBox = (ctx, element, x, y) => {
   positionElement(ctx, x, y, element);
 }
 
+const isInRect = (min, max, top, left) => {
+  const winWidth = window.innerWidth;
+  const winHeight = window.innerHeight;
+  const isTopBtwMinMax = top > min * winHeight && top < max * winHeight;
+  const isLeftBtwMinMax = left > min * winWidth && left < max * winWidth;
+  console.log(isTopBtwMinMax, isLeftBtwMinMax)
+  return isTopBtwMinMax && isLeftBtwMinMax;
+}
+
 function Graph2D(props, graphRef) {
   const [width, height] = useWindowSize()
   const {
@@ -252,7 +261,15 @@ function Graph2D(props, graphRef) {
         console.log('engine stops')
         setLastNodeExpanded((node) => {
           if(node === null) return null;
-          graphRef.current.centerAt(node.x, node.y, 2000)
+          const {x:left, y:top} = graphRef.current.graph2ScreenCoords(node.x, node.y);
+          console.log('coords of last node:', node.x, node.y)
+          console.log('left and top:', left, top)
+          const min = 0.25;
+          const max = 0.75;
+          const inCenter = isInRect(min, max, top, left);
+          if(!inCenter){
+            graphRef.current.centerAt(node.x, node.y, 2000)
+          }
           return null;
         })
         // graphRef.current.zoomToFit(100, 100)

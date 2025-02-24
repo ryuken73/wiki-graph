@@ -123,8 +123,8 @@ function App() {
     })
     setActiveExpandedNodeId(node.id);
     setLastNodeExpanded(node);
-    focusNode2D(node)
-  }, [focusNode2D])
+    // focusNode2D(node)
+  }, [])
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     console.log('addNewNode nodeId =', nodeId)
