@@ -24,7 +24,8 @@ export const getRelatedLinks = async (nodes, direction) => {
   })
   const linkType = direction;
   const personData = await fetch(
-    `${API_URL}/related/${linkType}`,
+    // `${API_URL}/related/${linkType}`,
+    `${API_URL}/relatedBTW/${linkType}`,
     {
       method: 'POST',
       body: JSON.stringify(postData)

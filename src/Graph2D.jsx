@@ -189,18 +189,8 @@ function Graph2D(props, graphRef) {
     console.log('source:target-', link.source.text, link.target.text)
     const sourceNode = link.source;
     const targetNode = link.target;
-    expandRelatedNode([sourceNode, targetNode])
-    // const hasReverseLink = isLinkBiDirectional(link, graphData.links)
-    // const srcNode = link.source;
-    // const tgtNode = link.target;
-    // if(hasReverseLink){
-    //   openChildWindow(tgtNode.wikiUrl, "right=0")
-    //   setTimeout(() => {
-    //     openChildWindow(srcNode.wikiUrl, "left=0")
-    //   }, 5000)
-    // } else {
-    //   openChildWindow(srcNode.wikiUrl, "right=0")
-    // }
+    const isForwarding = true;
+    expandRelatedNode([sourceNode, targetNode], isForwarding)
   }, [])
   const handleImgClick = React.useCallback(() => {
     const tgtNode = nodeHovered 
