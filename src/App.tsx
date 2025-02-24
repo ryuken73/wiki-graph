@@ -33,6 +33,7 @@ import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
 import AutoComplete from './Components/AutoComplete.jsx';
 import QuickButtons from './Components/QuickButtons.jsx';
+import useAppState from './hooks/useAppState';
 // import NodeHandler from './Components/NodeHandler';
 
 const Container = styled.div``
@@ -93,8 +94,8 @@ function App() {
   const [activeExpandedNodeId, setActiveExpandedNodeId] = React.useState(null);
   const [backlinksToShow, setBacklinksToShow] = React.useState([]);
   const [forwardlinksToShow, setForwardlinkToShow] = React.useState([]);
-  const [showBackdrop, setShowBackdrop] = React.useState(false);
   const [checkedNodeList, setCheckedNodeList] = React.useState([]);
+  const {showBackdrop, setShowBackdropState} = useAppState();
   const graphRef = React.useRef(null);
   const focusNode2D = genFocusNode(graphRef, '2D');
 
@@ -128,7 +129,7 @@ function App() {
 
   const addNewNode = React.useCallback(async (nodeId, isNodeContent) => {
     console.log('addNewNode nodeId =', nodeId)
-    setShowBackdrop(true)
+    setShowBackdropState(true)
     const nodeInfo = isNodeContent ? await getNodeByContentId(nodeId) : await getNodeByBacklinkId(nodeId);
     const expandNodes = isNodeContent ? await getBacklinksByContentId(nodeId) : await getForwardlinksByBacklinkId(nodeId)
     const newNode = nodeInfo[0];
@@ -145,7 +146,7 @@ function App() {
       setTimeout(() => {
         postExpandTask(addedNode)
       }, 150);
-      setShowBackdrop(false)
+      setShowBackdropState(false)
       return newNetworkData;
     })
   }, [postExpandTask]);
@@ -157,11 +158,11 @@ function App() {
   }, [addNewNode])
 
   const expandNode = React.useCallback(async (node, isForwardlink=false) => {
-    setShowBackdrop(true)
+    setShowBackdropState(true)
     const {id, backlinkId, isContent} = node;
     // console.log(isContent)
     // if(!isContent){
-    //   setShowBackdrop(false)
+    //   setShowBackdropState(false)
     //   return false
     // }
     console.log(node);
@@ -175,15 +176,17 @@ function App() {
       }, 150)
       return expandNetworkData(rows, node.id, lastNetworkData, includeOnlyContents, isForwardlink);
     })
-    setShowBackdrop(false)
+    setShowBackdropState(false)
   }, [postExpandTask]);
 
   const expandRelatedNode = React.useCallback(async (nodes, isForwardlink=false) => {
     console.log('nodes:', nodes)
-    setShowBackdrop(true)
+    setShowBackdropState(true)
     const direction = isForwardlink ? 'forwardlink':'backlink'
     const rows = await getRelatedLinks(nodes, direction);
     const includeOnlyContents = false;
+    // bug.. below make duplicate links...
+    // todo: should not make duplicate links
       setLastNetworkData(lastNetworkData => {
         return expandNetworkData(rows, nodes[0].id, lastNetworkData, includeOnlyContents, isForwardlink);
       })
@@ -195,7 +198,7 @@ function App() {
     //     return expandNetworkData(rows, nodes[0].id, lastNetworkData, includeOnlyContents, isForwardlink);
     //   })
     // }
-    setShowBackdrop(false)
+    setShowBackdropState(false)
   }, [])
 
   const shrinkNode = React.useCallback((eventOrId, direction = 'all') => {
@@ -268,7 +271,7 @@ function App() {
     <Container>
       <Backdrop
         open={showBackdrop}
-        setOpen={setShowBackdrop}
+        setOpen={setShowBackdropState}
       ></Backdrop>
       {/* <NodeHandler
         checkedNodeList={checkedNodeList}

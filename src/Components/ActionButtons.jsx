@@ -30,6 +30,9 @@ export default function ActionButtons(props) {
   const shrinkNodeOut = React.useCallback(() => {}, []);
   const showAllIn = React.useCallback(() => {}, []);
   const addFavorate = React.useCallback(() => {}, []);
+  const expandAllRelatedNode = React.useCallback(() => {
+
+  })
   return (
     <Container>
       <ButtonSmall onClick={removeNodeHovered} fontSize='12px' color='black' background='white'>삭제</ButtonSmall>
@@ -39,6 +42,7 @@ export default function ActionButtons(props) {
       <ButtonSmall onClick={shrinkNodeOut} fontSize='12px' color='black' background='white'>축소(OUT)</ButtonSmall>
       <ButtonSmall onClick={showAllIn} fontSize='12px' color='black' background='white'>참조</ButtonSmall>
       <ButtonSmall onClick={addFavorate} fontSize='12px' color='black' background='white'>즐겨찾기</ButtonSmall>
+      <ButtonSmall onClick={expandAllRelatedNode} fontSize='12px' color='black' background='white'>확장</ButtonSmall>
     </Container>
   )
 }
