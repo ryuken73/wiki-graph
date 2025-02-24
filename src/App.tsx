@@ -32,6 +32,7 @@ import ExpandedContainer from './Components/ExpandedContainer';
 import ForwardlinkContainer from './Components/ForwardlinkContainer.jsx';
 import BacklinkContainer from './Components/BacklinkContainer.jsx';
 import AutoComplete from './Components/AutoComplete.jsx';
+import QuickButtons from './Components/QuickButtons.jsx';
 // import NodeHandler from './Components/NodeHandler';
 
 const Container = styled.div``
@@ -246,6 +247,10 @@ function App() {
       })
     })
   }, [])
+  const removeAllNodes = React.useCallback(() => {
+    setLastNetworkData({nodes:[], links:[]});
+    setNodesExpanded([]);
+  }, [])
 
   console.log('lastNetwokData=', lastNetworkData)
   const totalNodes = getNumberOfNodes(lastNetworkData);
@@ -282,6 +287,9 @@ function App() {
           onSuggestSelected={addNewNode}
         ></AutoComplete>
       </AbsoluteBoxForSearch>
+      <QuickButtons
+        removeAllNodes={removeAllNodes}
+      ></QuickButtons>
       <AbsoluteBoxForNodesShown>
         <ActiveExpandedNode>
           {activeExpandedNodeId !== null ? (
