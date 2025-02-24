@@ -13,6 +13,16 @@ const LoadingText = styled.div`
   color: white;
   margin-left: 10px;
 `
+const SuggestionContainer = styled.div`
+  color: ${props => props.isContent ? 'rgba(0,0,0,1)':'rgba(0,0,0,0.5)'};
+`
+const Title = styled.span`
+`
+const Category = styled.span`
+  font-size: 12px;
+  margin-left: 5px;
+  color: rgba(0, 0, 0, 0.7);
+`
 
 
 function AutoComplete(props) {
@@ -21,6 +31,7 @@ function AutoComplete(props) {
   const [inputValue, setInputValue] = React.useState('');
   const [suggestions, setSuggestions] = React.useState([]);
   const onChangeInput = React.useCallback((event, {newValue, method}) => {
+    console.log('################',method)
     setInputValue(newValue);
   }, [])
   const requestSearch = React.useCallback((value) => {
@@ -45,7 +56,7 @@ function AutoComplete(props) {
       setSuggestions([]);
   }, [])
   const getSuggestionValue = React.useCallback((suggestion) => {
-    console.log('selected:', suggestion);
+    console.log('###selected:', suggestion);
     const node = {
       ...suggestion,
       backlinkId: suggestion.backlink_id
@@ -55,9 +66,21 @@ function AutoComplete(props) {
     return suggestion.text;
   }, []);
   const renderSuggestion = React.useCallback((suggestion, {query}) => {
-    const suggestionText = suggestion.text;
+    console.log(suggestion)
+    const suggestionText = suggestion?.text;
+    const suggestionCategory = suggestion?.primary_category;
+    const isContent = suggestionCategory !== null;
     return (
-      <div>{suggestionText}</div>
+      <SuggestionContainer isContent={isContent}>
+        <Title>
+          {suggestionText}
+        </Title>
+        {suggestionCategory && (
+          <Category>
+            [{suggestionCategory}]
+          </Category>
+        )}
+      </SuggestionContainer>
     )
 
   }, [])
